@@ -68,7 +68,14 @@ for imagePath in imagePaths:
 	# labels list
 	label = imagePath.split(os.path.sep)[-2]
 ##	print label
-	label = 1 if label == "fly" else 0
+	if label == "stop":
+                label=0
+	if label == "left":
+                label = 1 
+	if label == "right":
+                label = 2 
+	if label == "fly":
+                label = 3 
 	labels.append(label)
 
 # scale the raw pixel intensities to the range [0, 1]
@@ -84,8 +91,8 @@ print labels
 ##print testX
 
 # convert the labels from integers to vectors
-trainY = to_categorical(trainY, num_classes=2)
-testY = to_categorical(testY, num_classes=2)
+trainY = to_categorical(trainY, num_classes=4)
+testY = to_categorical(testY, num_classes=4)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
@@ -95,7 +102,7 @@ aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 # initialize the model
 print("[INFO] compiling model...")
 ##model = DroNet.build(width=64, height=64, depth=3, classes=2)
-model = avc_1Net.build(width=64, height=64, depth=3, classes=2)
+model = avc_1Net.build(width=64, height=64, depth=3, classes=4)
 ##model = avc_1Net.build(width=64, height=64, depth=1, classes=2)
 # model = ResNet.build(img_width=64,img_height=64,img_channels=3, output_dim=2)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
@@ -107,7 +114,7 @@ model.compile(loss="categorical_crossentropy", optimizer=opt,
 # construct the callback to save only the *best* model to disk
 # based on the validation loss
 
-checkpoint = ModelCheckpoint("./avcnet_best.hdf5", monitor="val_loss",
+checkpoint = ModelCheckpoint("./avcnet_best_1.hdf5", monitor="val_loss",
   save_best_only=True, verbose=1,save_weights_only=False,mode='auto',period=1)
 callbacks = [checkpoint]
 
