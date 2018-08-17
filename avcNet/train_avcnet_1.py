@@ -1,5 +1,7 @@
-# USAGE
-# python train_network.py --dataset imag --model avcnet.model
+# program to train cnn network
+# program inspired on the work of Adrian Rosebrock
+
+
 
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
