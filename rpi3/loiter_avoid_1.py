@@ -1,3 +1,6 @@
+# program to run on RPI3 to avoid obstacles
+# needed keras, opencv, pi-cam
+
 import threading
 from imutils.video.pivideostream import PiVideoStream #settings Pi camera
 from keras.preprocessing.image import img_to_array
