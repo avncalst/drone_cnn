@@ -1,5 +1,5 @@
-# USAGE
-# python test_network.py --model avcnet.model --image images/examp/avc.png
+# program to test Keras CNN on test images
+
 
 # import the necessary packages
 from keras.preprocessing.image import img_to_array
@@ -46,30 +46,14 @@ maxPair = max(my_dict.iteritems(), key=itemgetter(1))
 label=maxPair[0]
 proba=maxPair[1]
 
-##lijst=[stop,left,right,fly]
-##print lijst 
-##idx=lijst.index(max(lijst))
-##print idx, lijst[idx]
-##if idx==0:
-##    label="stop"
-##if idx==1:
-##    label="left"
-##if idx==2:
-##    label="right"
-##if idx==3:
-##    label="fly"
-
-# build the label
-
-##proba = lijst[idx]
 label = "{}: {:.2f}%".format(label, proba * 100)
 
-# draw the label on the image
+# draw label on the image
 output = imutils.resize(orig, width=400)
 cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
 	0.7, (0, 255, 0), 2)
 
-# show the output image
+# show output image
 cv2.imshow("Output", output)
 ##cv2.imwrite(args["file"],output)
 cv2.waitKey(0)

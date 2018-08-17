@@ -1,3 +1,6 @@
+# program to test Keras CNN on test video
+
+
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 ##from dronekit import connect, VehicleMode
@@ -55,41 +58,28 @@ while True:
     frame = np.expand_dims(frame, axis=0)
 
 
-    # classify the input image
+    # classify the input images
     (stop, left,right,fly) = model.predict(frame)[0]
                   
-    # build the label
-##    lijst=[stop,left,right,fly]
-##    print lijst
+    # build label list
     my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
     print my_dict
     maxPair = max(my_dict.iteritems(), key=itemgetter(1))
     label=maxPair[0]
     proba=maxPair[1]
-##    idx=lijst.index(max(lijst))
-##    print idx, lijst[idx]
-##    if idx==0:
-##        label="stop"
-##    if idx==1:
-##        label="left"
-##    if idx==2:
-##        label="right"
-##    if idx==3:
-##        label="fly"
-##
-##    proba = lijst[idx]
+
     label = "{} {:.1f}%".format(label, proba * 100)
 
-    # draw the label on the image
+    # draw label on image
     output = imutils.resize(orig, width=400)
     cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
             0.7, (0, 255, 0), 2)
     
-    # show the output frame
+    # show output frame
     cv2.imshow("Frame", output)
     key = cv2.waitKey(10) & 0xFF
 
-    # Write the frame into the file 'output.avi'
+    # Write frame into the file 'output.avi'
     out.write(output)
     
 
@@ -99,6 +89,6 @@ while True:
 
 
 
-# do a bit of cleanup
+# cleanup
 cv2.destroyAllWindows()
 ##cap.stop()
