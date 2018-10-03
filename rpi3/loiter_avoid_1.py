@@ -1,6 +1,3 @@
-# program to run on RPI3 to avoid obstacles
-# needed keras, opencv, pi-cam
-
 import threading
 from imutils.video.pivideostream import PiVideoStream #settings Pi camera
 from keras.preprocessing.image import img_to_array
@@ -97,7 +94,7 @@ def ai():
     # default parameters
     orient=0
     tim_old=0.1
-    state='avoid'
+    state='fly'
     dist=510
     global velocity_y
     velocity_y=0
@@ -116,18 +113,26 @@ def ai():
         # classify the input image
         (stop, left,right,fly) = model.predict(frame)[0]
         # build the label
-        my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
+##        my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
+        my_dict = {'stop':stop, 'left':left, 'right':right}        
         maxPair = max(my_dict.iteritems(), key=itemgetter(1))
-        label=maxPair[0]
-        proba=maxPair[1]          
-        
-        if fly*100 <= 55 and state=='fly':
-            state='avoid'
-            dist=180
 
-        if fly*100 >= 60 and state=='avoid':
-            state='fly'
-            dist=510        
+
+        if state == 'avoid':
+            label=maxPair[0]
+            proba=maxPair[1]
+            if fly*100 >= 60:
+                dist=510
+                state='fly'
+                
+                
+        else:
+            label='forward'
+            proba=fly
+            if fly*100 <= 55:
+                dist=180
+                state='avoid'
+        
 
         label_1 = "{} {:.1f}% {}".format(label, proba * 100, state)
         # draw the label on the image
