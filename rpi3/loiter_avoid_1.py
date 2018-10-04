@@ -129,7 +129,7 @@ def ai():
         else:
             label='forward'
             proba=fly
-            if fly*100 <= 55:
+            if fly*100 <= 50:
                 dist=180
                 state='avoid'
         
