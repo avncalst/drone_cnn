@@ -148,17 +148,20 @@ def ai():
         if vehicle.channels['8'] > 1400 and vehicle.channels['8'] < 1700:
             if state == "fly":
                 event.clear()
+ 
             if state == "avoid":
                 event.set()
+
                 if label == 'left':
                     velocity_y = -0.5
                 if label == 'right':
                     velocity_y = 0.5
                 if label == 'stop':
                     velocity_y = 0
-##            print "velocity_y:",velocity_y                
+               
         if vehicle.channels['8'] < 1400:
             event.clear()
+
 
         msg_sensor(dist,orient)        
     
@@ -172,7 +175,9 @@ def ai():
 
 
     # do a bit of cleanup
+    f.close()
     print('end')
+    
     cv2.destroyAllWindows()
     cap.stop()
 ##    out.release()    
@@ -181,33 +186,34 @@ def ai():
 
 def slide():
     velocity_x = 0 # m/s
-##    velocity_y = 0
     velocity_z = 0
     duration = 5 # s
     while True:
         event.wait()
         if (vehicle.mode.name=='LOITER' or vehicle.mode.name=='AUTO') and vehicle.armed==True:
+        
             flight_mode=vehicle.mode.name
-            print'vehicle mode:',flight_mode
+            print >>f, flight_mode
+
             vehicle.mode=VehicleMode("GUIDED")
             while not vehicle.mode.name=='GUIDED':
-                print "Waiting for mode change ..."
+                print >>f, 'Waiting for mode GUIDED'
                 time.sleep(0.5)
-            print'vehicle mode:',flight_mode
+            print >>f, flight_mode
             count=0
 
             while event.is_set() :
                 if vehicle.mode.name != 'GUIDED':
                    vehicle.mode=VehicleMode("LAND")
                    while not vehicle.mode.name=='LAND':
-                        print " Waiting for mode change ..."
+                        print >>f, 'Waiting for mode LAND'
                         time.sleep(0.5)
                    while vehicle.armed:
-                        print('landing')
+                        print >>f, 'landing'
                         time.sleep(1)
-                   print('landed')
+                   print >>f, 'landed'
                    break                 
-                print "velocity_y:",velocity_y
+                print >>f,'velocity_y:', str(velocity_y)
                 msg=slide_velocity(velocity_x,velocity_y,velocity_z)
                 vehicle.send_mavlink(msg)
                 time.sleep(1)
@@ -215,21 +221,21 @@ def slide():
                 if count >= 10:
                     vehicle.mode=VehicleMode("LAND")
                     while not vehicle.mode.name=='LAND':
-                        print "Waiting for mode change ..."
+                        print >>f, 'Waiting for mode LAND'
                         time.sleep(0.5)
                     while vehicle.armed:
-                        print('landing')
+                        print >>f, 'landing'
                         time.sleep(1)
-                    print('landed')
+                    print >>f, 'landed'
                     break
                 
-            print('move stopped')
+            print >>f, 'move stopped'
             if vehicle.mode.name != 'LAND':
                 vehicle.mode=VehicleMode(flight_mode)
                 while not vehicle.mode.name==flight_mode:
-                    print "Waiting for mode change ..."
+                    print >>f, 'Waiting for mode change ...'
                     time.sleep(0.5)
-                print'flight mode:',flight_mode
+                print >>f, flight_mode
 
 
 #=========================================================================
@@ -254,6 +260,7 @@ print " Velocity: %s" % vehicle.velocity
 print " GPS: %s" % vehicle.gps_0
 print " Flight mode currently: %s" % vehicle.mode.name
 # start threads
+f=open('log.txt','w')
 event = threading.Event()
 t1 = threading.Thread(target=ai)
 t2 = threading.Thread(target=slide)
