@@ -1,6 +1,3 @@
-# program to test Keras CNN on test video
-
-
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 ##from dronekit import connect, VehicleMode
@@ -29,7 +26,7 @@ out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc(*'XVID'), 25, (400,300)
 # load the trained convolutional neural network
 print("[INFO] loading network...")
 ##model = load_model("./avcnet_ref.model")
-model = load_model("./avcnet_best_1.hdf5",custom_objects={"tf": tf})
+model = load_model("./avcnet_best_1.hdf6",custom_objects={"tf": tf})
 # model = load_model("./avcnet_resnet.model")
 
 # default parameters
@@ -58,28 +55,41 @@ while True:
     frame = np.expand_dims(frame, axis=0)
 
 
-    # classify the input images
+    # classify the input image
     (stop, left,right,fly) = model.predict(frame)[0]
                   
-    # build label list
+    # build the label
+##    lijst=[stop,left,right,fly]
+##    print lijst
     my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
     print my_dict
     maxPair = max(my_dict.iteritems(), key=itemgetter(1))
     label=maxPair[0]
     proba=maxPair[1]
-
+##    idx=lijst.index(max(lijst))
+##    print idx, lijst[idx]
+##    if idx==0:
+##        label="stop"
+##    if idx==1:
+##        label="left"
+##    if idx==2:
+##        label="right"
+##    if idx==3:
+##        label="fly"
+##
+##    proba = lijst[idx]
     label = "{} {:.1f}%".format(label, proba * 100)
 
-    # draw label on image
+    # draw the label on the image
     output = imutils.resize(orig, width=400)
     cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
             0.7, (0, 255, 0), 2)
     
-    # show output frame
+    # show the output frame
     cv2.imshow("Frame", output)
     key = cv2.waitKey(10) & 0xFF
 
-    # Write frame into the file 'output.avi'
+    # Write the frame into the file 'output.avi'
     out.write(output)
     
 
@@ -89,6 +99,6 @@ while True:
 
 
 
-# cleanup
+# do a bit of cleanup
 cv2.destroyAllWindows()
 ##cap.stop()

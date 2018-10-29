@@ -1,5 +1,5 @@
-# program to test Keras CNN on test images
-
+# USAGE
+# python test_network.py --model avcnet.model --image images/examp/avc.png
 
 # import the necessary packages
 from keras.preprocessing.image import img_to_array
@@ -17,8 +17,8 @@ ap.add_argument("-m", "--model", required=True,
 	help="path to trained model model")
 ap.add_argument("-i", "--image", required=True,
 	help="path to input image")
-ap.add_argument("-s", "--file", required=True,
-	help="path to output file")
+##ap.add_argument("-s", "--file", required=True,
+##	help="path to output file")
 args = vars(ap.parse_args())
 
 # load the image
@@ -42,18 +42,35 @@ model = load_model(args["model"],custom_objects={"tf": tf})
 # classify the input image
 (stop, left,right,fly) = model.predict(image)[0]
 my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
+print my_dict
 maxPair = max(my_dict.iteritems(), key=itemgetter(1))
 label=maxPair[0]
 proba=maxPair[1]
 
+##lijst=[stop,left,right,fly]
+##print lijst 
+##idx=lijst.index(max(lijst))
+##print idx, lijst[idx]
+##if idx==0:
+##    label="stop"
+##if idx==1:
+##    label="left"
+##if idx==2:
+##    label="right"
+##if idx==3:
+##    label="fly"
+
+# build the label
+
+##proba = lijst[idx]
 label = "{}: {:.2f}%".format(label, proba * 100)
 
-# draw label on the image
+# draw the label on the image
 output = imutils.resize(orig, width=400)
 cv2.putText(output, label, (10, 25),  cv2.FONT_HERSHEY_SIMPLEX,
 	0.7, (0, 255, 0), 2)
 
-# show output image
+# show the output image
 cv2.imshow("Output", output)
 ##cv2.imwrite(args["file"],output)
 cv2.waitKey(0)
