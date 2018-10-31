@@ -119,11 +119,12 @@ def ai():
 
 
         if state == 'avoid':
-            label=maxPair[0]
-            proba=maxPair[1]
+##            label=maxPair[0]
+##            proba=maxPair[1]
             if fly*100 >= 60:
                 dist=510
                 state='fly'
+                print >>f,state
                 
                 
         else:
@@ -131,6 +132,9 @@ def ai():
             proba=fly
             if fly*100 <= 50:
                 dist=180
+                label=maxPair[0]
+                proba=maxPair[1]
+                print >>f,my_dict
                 state='avoid'
         
 
