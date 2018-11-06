@@ -38,8 +38,8 @@ args = vars(ap.parse_args())
 # initialize the number of epochs to train for, initia learning rate,
 # and batch size
 #EPOCHS = 25
-EPOCHS = 30
-#EPOCHS = 20
+##EPOCHS = 30
+EPOCHS = 50
 INIT_LR = 1e-3 # smaller value lowers error peaks
 ##INIT_LR = 5e-4 # smaller value lowers error peaks
 BS = 32
@@ -97,7 +97,7 @@ testY = to_categorical(testY, num_classes=4)
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-	horizontal_flip=True, fill_mode="nearest")
+	horizontal_flip=False, fill_mode="nearest")
 
 # initialize the model
 print("[INFO] compiling model...")
@@ -114,7 +114,7 @@ model.compile(loss="categorical_crossentropy", optimizer=opt,
 # construct the callback to save only the *best* model to disk
 # based on the validation loss
 
-checkpoint = ModelCheckpoint("./avcnet_best_1.hdf5", monitor="val_loss",
+checkpoint = ModelCheckpoint("./avcnet_best_6.hdf5", monitor="val_loss",
   save_best_only=True, verbose=1,save_weights_only=False,mode='auto',period=1)
 callbacks = [checkpoint]
 

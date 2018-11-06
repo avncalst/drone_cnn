@@ -26,7 +26,7 @@ out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc(*'XVID'), 25, (400,300)
 # load the trained convolutional neural network
 print("[INFO] loading network...")
 ##model = load_model("./avcnet_ref.model")
-model = load_model("./avcnet_best_1.hdf5",custom_objects={"tf": tf})
+model = load_model("./avcnet_best_5.hdf5",custom_objects={"tf": tf})
 # model = load_model("./avcnet_resnet.model")
 
 # default parameters
