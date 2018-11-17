@@ -89,7 +89,7 @@ def ai():
     # load the trained convolutional neural network
     print("[INFO] loading network...")
 ##    model = load_model("./avcnet_v1.model")
-    model = load_model("./avcnet_best_1.hdf5",custom_objects={"tf": tf} )
+    model = load_model("/home/pi/drone_exe/avcnet_best_5.hdf5",custom_objects={"tf": tf} )
   
     # default parameters
     orient=0
@@ -98,6 +98,8 @@ def ai():
     dist=510
     global velocity_y
     velocity_y=0
+    fly_1=0.9
+    k=0.83 # k=(tau/T)/(1+tau/T) tau time constant LPF, T period
 
     while True:
         start = time.time()
@@ -116,12 +118,14 @@ def ai():
 ##        my_dict = {'stop':stop, 'left':left, 'right':right,'fly':fly}
         my_dict = {'stop':stop, 'left':left, 'right':right}        
         maxPair = max(my_dict.iteritems(), key=itemgetter(1))
+        fly_f = k*fly_1 + (1-k)*fly
+        fly_1 = fly_f
 
 
         if state == 'avoid':
 ##            label=maxPair[0]
 ##            proba=maxPair[1]
-            if fly*100 >= 60:
+            if fly_f*100 >= 60:
                 dist=510
                 state='fly'
                 print >>f,state
@@ -130,7 +134,7 @@ def ai():
         else:
             label='forward'
             proba=fly
-            if fly*100 <= 50:
+            if fly_f*100 <= 50:
                 dist=180
                 label=maxPair[0]
                 proba=maxPair[1]
@@ -264,7 +268,7 @@ print " Velocity: %s" % vehicle.velocity
 print " GPS: %s" % vehicle.gps_0
 print " Flight mode currently: %s" % vehicle.mode.name
 # start threads
-f=open('log.txt','w')
+f=open('/home/pi/drone_exe/log.txt','w')
 event = threading.Event()
 t1 = threading.Thread(target=ai)
 t2 = threading.Thread(target=slide)
