@@ -10,6 +10,7 @@ import time
 import cv2
 import tensorflow as tf
 from operator import itemgetter
+import VL53L1X
 
 
 #=========================================================================
@@ -57,12 +58,12 @@ def condition_yaw(heading, relative=True):
     # send command to vehicle
     vehicle.send_mavlink(msg)
 
-def msg_sensor(dist,orient):
+def msg_sensor(dist,orient,distmax):
     
     msg = vehicle.message_factory.distance_sensor_encode(
             0,      # time system boot, not used
-            20,     # min disance cm
-            600,    # max dist cm
+            10,     # min disance cm
+            distmax,# max dist cm
             dist,   # current dist, int
             0,      # type sensor
             1,      # on board id, not used
@@ -93,13 +94,15 @@ def ai():
   
     # default parameters
     orient=0
+    distmax=600
     tim_old=0.1
     state='fly'
     dist=510
     global velocity_y
     velocity_y=0
     fly_1=0.9
-    k=0.83 # k=(tau/T)/(1+tau/T) tau time constant LPF, T period
+    k=0.66 # k=(tau/T)/(1+tau/T) tau time constant LPF, T period
+##    k=0 # no filtering
 
     while True:
         start = time.time()
@@ -171,7 +174,7 @@ def ai():
             event.clear()
 
 
-        msg_sensor(dist,orient)        
+        msg_sensor(dist,0,600)        
     
         # show the output frame
         cv2.imshow("Frame", output)
@@ -188,7 +191,8 @@ def ai():
     
     cv2.destroyAllWindows()
     cap.stop()
-##    out.release()    
+##    out.release()
+    
 #=========================================================================
 # thread 2
 
@@ -245,6 +249,21 @@ def slide():
                     time.sleep(0.5)
                 print >>f, flight_mode
 
+#=========================================================================
+# thread 3
+
+def lidar():
+
+    tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+    tof.open() # Initialise the i2c bus and configure the sensor
+    tof.start_ranging(2) # Start ranging, 1 = Short Range, 2 = Medium Range, 3 = Long Range
+    # Short range max:1.3m, Medium range max:3m, Long range max:4m
+    while True:
+        distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
+        time.sleep(0.5)
+##        print distance_in_cm
+        msg_sensor(distance_in_cm,25,200), #down
+    tof.stop_ranging() # Stop ranging
 
 #=========================================================================
 # main
@@ -272,8 +291,11 @@ f=open('/home/pi/drone_exe/log.txt','w')
 event = threading.Event()
 t1 = threading.Thread(target=ai)
 t2 = threading.Thread(target=slide)
+t3 = threading.Thread(target=lidar)
 t2.daemon=True # has to run in console
+t3.daemon=True
 t1.start()
 t2.start()
+t3.start()
 t1.join()
         
