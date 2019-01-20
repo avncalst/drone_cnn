@@ -65,9 +65,9 @@ def msg_sensor(dist,orient,distmax):
             10,     # min disance cm
             distmax,# max dist cm
             dist,   # current dist, int
-            0,      # type sensor
+            0,      # type sensor, laser
             1,      # on board id, not used
-            orient, # orientation: 0...7
+            orient, # orientation: 0...7,25
             0,      # covariance, not used
             )
     
@@ -260,7 +260,7 @@ def lidar():
     # Short range max:1.3m, Medium range max:3m, Long range max:4m
     while True:
         distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
-        time.sleep(0.5)
+        time.sleep(0.2)# timeout mavlink rangefinder = 500 ms
 ##        print distance_in_cm
         msg_sensor(distance_in_cm,25,200), #down
     tof.stop_ranging() # Stop ranging
