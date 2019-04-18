@@ -67,7 +67,7 @@ def msg_sensor(dist,orient,distmax):
             dist,   # current dist, int
             0,      # type sensor, laser
             1,      # on board id, not used
-            orient, # orientation: 0...7,25
+            orient, # orientation: 0...7, 25
             0,      # covariance, not used
             )
     
@@ -80,17 +80,19 @@ def msg_sensor(dist,orient,distmax):
 def ai():
     cap=PiVideoStream(resolution=(208,208))                  #rpi camera
     cap.start()
+    cap.camera.iso=0 # 0:auto, 100-200: sunny day
+    cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
     time.sleep(2.0)
-    cap.camera.hflip=True
-    cap.camera.vflip=True
+##    cap.camera.hflip=True
+##    cap.camera.vflip=True
 
     print("[INFO] video recording")
-##    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 10, (208,208))
+    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 10, (208,208))
 
     # load the trained convolutional neural network
     print("[INFO] loading network...")
 ##    model = load_model("./avcnet_v1.model")
-    model = load_model("/home/pi/drone_exe/avcnet_best_5.hdf5",custom_objects={"tf": tf} )
+    model = load_model("/home/pi/drone_exe/avcnet_best_7.hdf5",custom_objects={"tf": tf} )
   
     # default parameters
     orient=0
@@ -152,7 +154,7 @@ def ai():
                 0.7, (0, 255, 0), 2)
 
         # Write the frame into the file 'output.avi'
-##        out.write(output)         
+        out.write(output)         
 
         if vehicle.channels['8'] > 1700:
             event.clear()
@@ -191,7 +193,7 @@ def ai():
     
     cv2.destroyAllWindows()
     cap.stop()
-##    out.release()
+    out.release()
     
 #=========================================================================
 # thread 2
@@ -260,9 +262,10 @@ def lidar():
     # Short range max:1.3m, Medium range max:3m, Long range max:4m
     while True:
         distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
-        time.sleep(0.2)# timeout mavlink rangefinder = 500 ms
+        time.sleep(0.2) # timeout mavlink rangefinder = 500 ms
 ##        print distance_in_cm
-        msg_sensor(distance_in_cm,25,200), #down
+        msg_sensor(distance_in_cm,25,250), #down
+
     tof.stop_ranging() # Stop ranging
 
 #=========================================================================
@@ -291,11 +294,11 @@ f=open('/home/pi/drone_exe/log.txt','w')
 event = threading.Event()
 t1 = threading.Thread(target=ai)
 t2 = threading.Thread(target=slide)
-t3 = threading.Thread(target=lidar)
+##t3 = threading.Thread(target=lidar)
 t2.daemon=True # has to run in console
-t3.daemon=True
+##t3.daemon=True
 t1.start()
 t2.start()
-t3.start()
+##t3.start()
 t1.join()
         
