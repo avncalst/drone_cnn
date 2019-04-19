@@ -82,9 +82,15 @@ def ai():
     cap.start()
     cap.camera.iso=0 # 0:auto, 100-200: sunny day
     cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
-    time.sleep(2.0)
 ##    cap.camera.hflip=True
-##    cap.camera.vflip=True
+##    cap.camera.vflip=True    
+    time.sleep(2.0)
+##    print "analog_gain: ",float(cap.camera.analog_gain)
+##    print "exposure_speed: ",cap.camera.exposure_speed
+##    print "iso: ", cap.camera.iso
+    print >>f, "analog_gain: ",float(cap.camera.analog_gain)
+    print >>f, "exposure_speed: ",cap.camera.exposure_speed
+    print >>f, "iso: ", cap.camera.iso    
 
     print("[INFO] video recording")
     out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 10, (208,208))
