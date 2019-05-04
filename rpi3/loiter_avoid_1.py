@@ -10,7 +10,7 @@ import time
 import cv2
 import tensorflow as tf
 from operator import itemgetter
-import VL53L1X
+##import VL53L1X
 
 
 #=========================================================================
@@ -80,7 +80,7 @@ def msg_sensor(dist,orient,distmax):
 def ai():
     cap=PiVideoStream(resolution=(208,208))                  #rpi camera
     cap.start()
-    cap.camera.iso=0 # 0:auto, 100-200: sunny day
+    cap.camera.iso=100 # 0:auto, 100-200: sunny day
     cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
 ##    cap.camera.hflip=True
 ##    cap.camera.vflip=True    
@@ -260,19 +260,44 @@ def slide():
 #=========================================================================
 # thread 3
 
-def lidar():
+def range_dist():
 
-    tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
-    tof.open() # Initialise the i2c bus and configure the sensor
-    tof.start_ranging(2) # Start ranging, 1 = Short Range, 2 = Medium Range, 3 = Long Range
-    # Short range max:1.3m, Medium range max:3m, Long range max:4m
-    while True:
-        distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
-        time.sleep(0.2) # timeout mavlink rangefinder = 500 ms
-##        print distance_in_cm
-        msg_sensor(distance_in_cm,25,250), #down
+    sonar=True # sonar True EZ4 sonar, else: VL53L1X
 
-    tof.stop_ranging() # Stop ranging
+    if sonar:
+        from smbus import SMBus
+##        i2cbus = SMBus(1)
+        while True:
+            try:
+                i2cbus = SMBus(1)
+                i2cbus.write_byte(0x70, 0x51)
+                time.sleep(0.12)
+                val = i2cbus.read_word_data(0x70, 0xE1)
+                distance_in_cm=val>>8 | (val & 0x0F)<<8
+##                print distance_in_cm, 'cm'
+                print>>f,distance_in_cm,'cm'
+                msg_sensor(distance_in_cm,25,400), #down
+                
+            except IOError, err:
+                print err
+
+            time.sleep(0.1)
+            
+ 
+
+    else:
+        import VL53L1X
+        tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+        tof.open() # Initialise the i2c bus and configure the sensor
+        tof.start_ranging(2) # Start ranging, 1 = Short Range, 2 = Medium Range, 3 = Long Range
+        # Short range max:1.3m, Medium range max:3m, Long range max:4m
+        while True:
+            distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
+            time.sleep(0.2) # timeout mavlink rangefinder = 500 ms
+    ##        print distance_in_cm
+            msg_sensor(distance_in_cm,25,250), #down
+
+        tof.stop_ranging() # Stop ranging
 
 #=========================================================================
 # main
@@ -300,11 +325,11 @@ f=open('/home/pi/drone_exe/log.txt','w')
 event = threading.Event()
 t1 = threading.Thread(target=ai)
 t2 = threading.Thread(target=slide)
-##t3 = threading.Thread(target=lidar)
+t3 = threading.Thread(target=range_dist)
 t2.daemon=True # has to run in console
-##t3.daemon=True
+t3.daemon=True
 t1.start()
 t2.start()
-##t3.start()
+t3.start()
 t1.join()
         
