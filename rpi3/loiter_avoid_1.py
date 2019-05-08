@@ -262,9 +262,10 @@ def slide():
 
 def range_dist():
 
-    sonar=True # sonar True EZ4 sonar, else: VL53L1X
+    lidar_sens=True # lidar sensing True, else EZ4 sonar or VL53L1X
 
     if sonar:
+        # does not work well on grass
         from smbus import SMBus
 ##        i2cbus = SMBus(1)
         while True:
@@ -276,16 +277,31 @@ def range_dist():
                 distance_in_cm=val>>8 | (val & 0x0F)<<8
 ##                print distance_in_cm, 'cm'
                 print>>f,distance_in_cm,'cm'
-                msg_sensor(distance_in_cm,25,400), #down
+                msg_sensor(distance_in_cm,25,400), #sonar facing down
                 
             except IOError, err:
                 print err
 
             time.sleep(0.1)
+
+    if lidar_sens:
+        from lidar_lite import Lidar_Lite
+        lidar = Lidar_Lite()
+        connected=lidar.connect(1)
+        if connected < 0:
+            print "\nlidar not connected"
+        else:
+            print "\nlidar connected"
+        while True:
+            dist = lidar.getDistance()
+            print dist,'cm'
+            print>>f,dist,'cm'
+            msg_sensor(distance_in_cm,25,700), #lidar facing down
+            time.sleep(0.2)
             
- 
 
     else:
+        # does not work in sunlight
         import VL53L1X
         tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
         tof.open() # Initialise the i2c bus and configure the sensor
@@ -295,7 +311,7 @@ def range_dist():
             distance_in_cm = tof.get_distance()/10 # Grab the range in cm (mm)
             time.sleep(0.2) # timeout mavlink rangefinder = 500 ms
     ##        print distance_in_cm
-            msg_sensor(distance_in_cm,25,250), #down
+            msg_sensor(distance_in_cm,25,250), #sensor facing down
 
         tof.stop_ranging() # Stop ranging
 
