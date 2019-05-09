@@ -297,7 +297,7 @@ def range_dist():
             dist = lidar.getDistance()
             print dist,'cm'
             print>>f,dist,'cm'
-            msg_sensor(dist,5,700), #lidar facing down
+            msg_sensor(dist,25,700), #lidar facing down
             time.sleep(0.2)
             
 
