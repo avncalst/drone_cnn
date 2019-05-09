@@ -261,7 +261,8 @@ def slide():
 # thread 3
 
 def range_dist():
-
+    
+    sonar=False
     lidar_sens=True # lidar sensing True, else EZ4 sonar or VL53L1X
 
     if sonar:
@@ -296,7 +297,7 @@ def range_dist():
             dist = lidar.getDistance()
             print dist,'cm'
             print>>f,dist,'cm'
-            msg_sensor(distance_in_cm,25,700), #lidar facing down
+            msg_sensor(dist,5,700), #lidar facing down
             time.sleep(0.2)
             
 
