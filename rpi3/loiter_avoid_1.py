@@ -78,7 +78,7 @@ def msg_sensor(dist,orient,distmax):
 # thread 1
 
 def ai():
-    cap=PiVideoStream(resolution=(208,208))                  #rpi camera
+    cap=PiVideoStream(resolution=(208,208), framerate=20)   #rpi camera
     cap.start()
     cap.camera.iso=100 # 0:auto, 100-200: sunny day
     cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
@@ -93,7 +93,7 @@ def ai():
     print >>f, "iso: ", cap.camera.iso    
 
     print("[INFO] video recording")
-    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 10, (208,208))
+    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 20, (208,208))
 
     # load the trained convolutional neural network
     print("[INFO] loading network...")
