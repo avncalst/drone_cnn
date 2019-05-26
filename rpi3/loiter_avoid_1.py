@@ -93,7 +93,7 @@ def ai():
     print >>f, "iso: ", cap.camera.iso    
 
     print("[INFO] video recording")
-    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 20, (208,208))
+    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 4, (208,208))
 
     # load the trained convolutional neural network
     print("[INFO] loading network...")
