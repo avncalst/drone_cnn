@@ -1,6 +1,7 @@
 # drone_cnn
 * python cnn files for drone obstacles avoidance.
 * files include training cnn (avcNet folder) and files for running cnn on rpi3 (rpi3 folder)
-* example cnn trained binary files included in rpi3 folder
-* different interference methods added
+* example cnn trained binary files (hdf5 - pb) included in rpi3 folder
+* different interference methods added: OpenVINO (Intel), DNN-OpenCV, tensorflow, keras.
+* on rpi3 DNN-OpenCV: 6 fps, DNN-MYRIAD (NCS1): 20 fps using OpenCV version 4.1.0
 * Wiki: brief project description
