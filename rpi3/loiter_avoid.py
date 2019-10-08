@@ -89,7 +89,7 @@ def msg_sensor(dist,orient,distmax):
 def ai():
     cap=PiVideoStream(resolution=(208,208),framerate=20)    #rpi camera
     cap.start()
-    cap.camera.iso=0 # 0:auto, 100-200: sunny day
+    cap.camera.iso=100 # 0:auto, 100-200: sunny day
     cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
     cap.camera.hflip=True
     cap.camera.vflip=True    
@@ -100,7 +100,7 @@ def ai():
     print("iso: ", cap.camera.iso,file=f)   
 
     print("[INFO] video recording")
-    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 4, (208,208))
+    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 20, (208,208))
 
 
     # load the trained convolutional neural network
@@ -133,9 +133,9 @@ def ai():
     
     if inference == 'dnn':
         net=cv2.dnn.readNetFromTensorflow('/home/pi/drone_exe/TF_model/tf_model_cv.pb')
-        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
-        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
-##        net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
+##        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
+##        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
 
   
     # default parameters
@@ -203,8 +203,9 @@ def ai():
 
 
         if state == 'avoid':
-##            label=maxPair[0]
-##            proba=maxPair[1]
+            label=maxPair[0]
+            proba=maxPair[1]
+##            print(label,file=f)
             if fly_f*100 >= 60:
                 dist=510
                 state='fly'
@@ -213,12 +214,13 @@ def ai():
                 
         else:
             label='forward'
-            proba=fly
+            proba=fly_f
+##            print(label,proba,file=f)
             if fly_f*100 <= 50:
                 dist=180
                 label=maxPair[0]
                 proba=maxPair[1]
-                print(my_dict,file=f)
+                print(label,file=f)
                 state='avoid'
         
 
