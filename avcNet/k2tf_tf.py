@@ -1,9 +1,16 @@
-from tensorflow.keras.models import load_model
-from keras import backend as K
-import tensorflow as tf
-import warnings
+"""
+script for converting a keras h5 file to a tensorflow .pb file
+this script is compatibel with tensorflow 2.0
+"""
 
-warnings.filterwarnings("ignore", category=FutureWarning)
+from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras import backend as K
+##import tensorflow as tf
+##import warnings
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+# warnings.filterwarnings("ignore", category=FutureWarning)
 
 ##keras_model = "/home/pi/drone_exe/utilities/avcnet_best.hdf5"
 keras_model = "/home/pi/drone_exe/utilities/myModel_tf.h5"
