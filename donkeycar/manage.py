@@ -98,19 +98,19 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
             threaded = True
             inputs = ['angle', 'throttle']
         elif cfg.CAMERA_TYPE == "PICAM":
-            from donkeycar.parts.camera import PiCamera
+            from donkeycar.parts.camera import PiCamera, CvImageView
             cam = PiCamera(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
         elif cfg.CAMERA_TYPE == "PICAM_1":
             from donkeycar.parts.camera import PiCam, CvImageView
             cam = PiCam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
-            disp = CvImageView()           
+            # disp = CvImageView()           
         elif cfg.CAMERA_TYPE == "WEBCAM":
             from donkeycar.parts.camera import Webcam
             cam = Webcam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
         elif cfg.CAMERA_TYPE == "CVCAM":
             from donkeycar.parts.cv import CvCam, CvImageView
             cam = CvCam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
-            disp = CvImageView()
+            # disp = CvImageView()
         elif cfg.CAMERA_TYPE == "CSIC":
             from donkeycar.parts.camera import CSICamera
             cam = CSICamera(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH, framerate=cfg.CAMERA_FRAMERATE, gstreamer_flip=cfg.CSIC_CAM_GSTREAMER_FLIP_PARM)
@@ -121,10 +121,10 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
             from donkeycar.parts.camera import MockCamera
             from donkeycar.parts.cv import CvCam, CvImageView
             cam = MockCamera(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
-            disp = CvImageView()
+            # disp = CvImageView()
         else:
             raise(Exception("Unkown camera type: %s" % cfg.CAMERA_TYPE))
-            
+        disp = CvImageView()    
         V.add(cam, inputs=inputs, outputs=['cam/image_array'], threaded=threaded)
         V.add(disp, inputs=["cam/image_array"])
         

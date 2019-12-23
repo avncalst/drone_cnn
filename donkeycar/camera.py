@@ -363,6 +363,7 @@ class CvImageView(object):
             return
         try:
             if(image is not None):
+                image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)  #if PiCamera (PICAM) used, not in case of PiCam (PICAM_1)
                 cv2.imshow('frame', image)
                 cv2.waitKey(1)
         except:

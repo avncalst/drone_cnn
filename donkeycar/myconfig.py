@@ -20,7 +20,7 @@
 # MAX_LOOPS = None        # the vehicle loop can abort after this many iterations, when given a positive integer.
 # 
 # #CAMERA
-CAMERA_TYPE = "PICAM_1"   # (PICAM|PICAM_1|WEBCAM|CVCAM|CSIC|V4L|MOCK)
+# CAMERA_TYPE = "MOCK"   # (PICAM|PICAM_1|WEBCAM|CVCAM|CSIC|V4L|MOCK)
 # CAMERA_TYPE = "CVCAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|MOCK)
 # IMAGE_W = 160
 # IMAGE_H = 120
@@ -74,7 +74,6 @@ ARDUPILOT = True
 # #between different neural network designs. You can override this setting by passing the command
 # #line parameter --type to the python manage.py train and drive commands.
 # DEFAULT_MODEL_TYPE = 'linear'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent)
-##DEFAULT_MODEL_TYPE = 'categorical'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent)
 # BATCH_SIZE = 128                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
 # TRAIN_TEST_SPLIT = 0.8          #what percent of records to use for training. the remaining used for validation.
 # MAX_EPOCHS = 100                #how many times to visit all records of your data

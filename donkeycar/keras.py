@@ -7,6 +7,7 @@ contain the highlevel logic used to determine the angle
 and throttle of a vehicle. Pilots can include one or more 
 models to help direct the vehicles motion. 
 
+!!!Remark!!!: swap RGB->BGR if PiCamera is used when using CV2(DNN), no swap if PiCam used.
 '''
 
 
@@ -56,9 +57,9 @@ class KerasPilot(object):
             self.dnn = False
         if '.pb' in model_path:
             self.net = cv2.dnn.readNetFromTensorflow(model_path)
-            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
-            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick            
-            # self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
+##            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
+##            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick            
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
             self.dnn = True
 
     def load_weights(self, model_path, by_name=True):
@@ -148,9 +149,10 @@ class KerasCategorical(KerasPilot):
             print('no image')
             return 0.0, 0.0
         if self.dnn:
-             # scale=1/255.0 # already done @ img_arr-load_scaled_image_arr(filename, cfg)
+            # !!! notice remark on RGB->BGR  !!!
+            # scale=1/255.0 # already done @ img_arr-load_scaled_image_arr(filename, cfg)
             blob = cv2.dnn.blobFromImage(img_arr,1,
-                        (160, 120), (0,0,0),swapRB=False)
+                        (160, 120), (0,0,0),swapRB=True)
             self.net.setInput(blob)
             names=['n_outputs0/MatMul','n_outputs1/MatMul']
             angle_binned, throttle = self.net.forward(names)            
@@ -183,16 +185,17 @@ class KerasLinear(KerasPilot):
     def compile(self):
         self.model.compile(optimizer=self.optimizer,
                 loss='mse')
-        print('compile')
+##        print('compile')
 
     def run(self, img_arr):
         
 ##        img_arr = img_arr.reshape((1,) + img_arr.shape)
         
         if self.dnn:
+            # !!! notice remark on RGB->BGR  !!!
             # scale=1/255.0 # already done @ img_arr-load_scaled_image_arr(filename, cfg)
             blob = cv2.dnn.blobFromImage(img_arr,1,
-                        (160, 120), (0,0,0),swapRB=False)
+                        (160, 120), (0,0,0),swapRB=True)
             self.net.setInput(blob)
 ##            print(self.net.getLayerNames())
             names=['n_outputs0/MatMul','n_outputs1/MatMul']
