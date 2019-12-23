@@ -6,3 +6,4 @@
 * on rpi3 DNN-OpenCV: 6 fps, DNN-MYRIAD (NCS1): 20 fps using OpenCV version 4.1.0
 * a simple python obstacle avoidance script is included
 * Wiki: [brief project description](https://github.com/avncalst/drone_cnn/wiki)
+* donkeycar folder added containing the modified/added files making ArduPilot Rover compatible with donkeycar
