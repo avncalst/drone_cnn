@@ -21,6 +21,10 @@ class PiCamera(BaseCamera):
         self.camera = PiCamera() #PiCamera gets resolution (height, width)
         self.camera.resolution = resolution
         self.camera.framerate = framerate
+        self.camera.hflip = True
+        self.camera.vflip = True
+        self.camera.iso=0 # 0:auto, 100-200: sunny day
+        self.camera.awb_mode='sunlight' # sunlight,cloudy,auto
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
         self.stream = self.camera.capture_continuous(self.rawCapture,
             format="rgb", use_video_port=True)
@@ -31,8 +35,13 @@ class PiCamera(BaseCamera):
         self.on = True
         self.image_d = image_d
 
+
+
         print('PiCamera loaded.. .warming camera')
         time.sleep(2)
+        print("analog_gain: ",float(self.camera.analog_gain))
+        print("exposure_speed: ",self.camera.exposure_speed)
+        print("iso: ", self.camera.iso)
 
 
     def run(self):
@@ -363,7 +372,7 @@ class CvImageView(object):
             return
         try:
             if(image is not None):
-                image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)  #if PiCamera (PICAM) used, not in case of PiCam (PICAM_1)
+                image = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)  #if PiCam used, not in case of PiCam_1
                 cv2.imshow('frame', image)
                 cv2.waitKey(1)
         except:

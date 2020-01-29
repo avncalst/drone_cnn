@@ -23,6 +23,7 @@ from tensorflow.python.keras.layers import Permute
 from tensorflow.python.keras.layers import Input, Dense
 from tensorflow.python.keras.models import Model, Sequential
 from tensorflow.python.keras.layers import Convolution2D, MaxPooling2D, Reshape, BatchNormalization
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras.layers import Activation, Dropout, Flatten, Cropping2D, Lambda
 from tensorflow.python.keras.layers.merge import concatenate
 from tensorflow.python.keras.layers import LSTM
@@ -292,6 +293,8 @@ class KerasLocalizer(KerasPilot):
     A Keras part that take an image as input,
     outputs steering and throttle, and localisation category
     '''
+    
+
     def __init__(self, model=None, num_locations=8, input_shape=(120, 160, 3), *args, **kwargs):
         super(KerasLocalizer, self).__init__(*args, **kwargs)
         self.model = default_loc(num_locations=num_locations, input_shape=input_shape)
@@ -318,6 +321,7 @@ def default_categorical(input_shape=(120, 160, 3), roi_crop=(0, 0)):
 
     opt = keras.optimizers.Adam()
     drop = 0.2
+    cfg = dk.load_config()
 
     #we now expect that cropping done elsewhere. we will adjust our expeected image size here:
     input_shape = adjust_input_shape(input_shape, roi_crop)
@@ -351,13 +355,63 @@ def default_categorical(input_shape=(120, 160, 3), roi_crop=(0, 0)):
     x = Dense(50, activation='relu', name="fc_2")(x)                                     # Classify the data into 50 features, make all negatives 0
     x = Dropout(drop)(x)                                                      # Randomly drop out 10% of the neurons (Prevent overfitting)
     #categorical output of the angle
-    angle_out = Dense(15, activation='softmax', name='angle_out')(x)        # Connect every input with every output and output 15 hidden units. Use Softmax to give percentage. 15 categories and find best one based off percentage 0.0-1.0
+    if cfg.DEFAULT_MODEL_TYPE == 'copter':
+
+        angle_out = Dense(4, activation='softmax', name='angle_out')(x)
+        model = Model(inputs=[img_in], outputs=[angle_out])
+        
+    else:
+
+        angle_out = Dense(15, activation='softmax', name='angle_out')(x)        # Connect every input with every output and output 15 hidden units. Use Softmax to give percentage. 15 categories and find best one based off percentage 0.0-1.0
+        throttle_out = Dense(20, activation='softmax', name='throttle_out')(x)      # Reduce to 1 number, Positive number only
     
-    #continous output of throttle
-    throttle_out = Dense(20, activation='softmax', name='throttle_out')(x)      # Reduce to 1 number, Positive number only
+        model = Model(inputs=[img_in], outputs=[angle_out, throttle_out])
     
-    model = Model(inputs=[img_in], outputs=[angle_out, throttle_out])
     return model
+
+def default_avcnetCV(input_shape=(120, 160, 3), roi_crop=(0, 0)):
+
+    #we now expect that cropping done elsewhere. we will adjust our expeected image size here:
+    input_shape = adjust_input_shape(input_shape, roi_crop)
+    opt = keras.optimizers.Adam()
+    cfg = dk.load_config()
+
+    
+    # Input
+    img_in = Input(shape=input_shape, name='img_in')    # First layer, input layer, Shape comes from camera.py resolution, RGB
+    x = img_in   
+
+
+    x1 = Conv2D(24, (5, 5), padding='same')(x)
+    x1 = Activation('relu')(x1)
+    x1 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x1)
+    x1 = Dropout(0.2)(x1)
+
+    x2 = Conv2D(48, (5, 5), padding='same')(x1)
+    x2 = Activation('relu')(x2)
+    x2 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x2)
+    x2 = Dropout(0.2)(x2)
+
+    x3 = Conv2D(96, (5, 5), padding='same')(x2)
+    x3 = Activation('relu')(x3)
+    x3 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x3)
+    x3 = Dropout(0.2)(x3)
+
+
+    # x4 = Flatten()(x3) # OpenCV/dnn does not support flatten
+    a, b, c, d = x3.shape # returns dimension
+    a = b*c*d
+    x4 = Permute([1, 2, 3])(x3)
+    x4 = Reshape((int(a),))(x4) # convert dim -> int
+    x4 = Dense(500)(x4)
+    x4 = Activation('relu')(x4)
+    x4 = Dropout(0.2)(x4)
+
+    angle_out = Dense(4, activation='softmax', name='angle_out')(x4)
+    model = Model(inputs=[img_in], outputs=[angle_out])
+
+    return model
+
 
 
 
@@ -763,3 +817,51 @@ def default_latent(num_outputs, input_shape):
     model = Model(inputs=[img_in], outputs=outputs)
     
     return model
+
+class KerasCopter(KerasPilot):
+    '''
+    The KerasCategorical pilot breaks the steering and throttle decisions into discreet
+    angles and then uses categorical cross entropy to train the network to activate a single
+    neuron for each steering and throttle choice. This can be interesting because we
+    get the confidence value as a distribution over all choices.
+    This uses the dk.utils.linear_bin and dk.utils.linear_unbin to transform continuous
+    real numbers into a range of discreet values for training and runtime.
+    The input and output are therefore bounded and must be chosen wisely to match the data.
+    The default ranges work for the default setup. But cars which go faster may want to
+    enable a higher throttle range. And cars with larger steering throw may want more bins.
+    '''
+    def __init__(self, input_shape=(120, 160, 3), throttle_range=0.5, roi_crop=(0, 0), *args, **kwargs):
+        super(KerasCopter, self).__init__(*args, **kwargs)
+        # self.model = default_categorical(input_shape, roi_crop)
+        self.model = default_avcnetCV(input_shape, roi_crop)
+        self.compile()
+        self.throttle_range = throttle_range
+
+    def compile(self):
+        self.model.compile(optimizer=self.optimizer, metrics=['acc'],
+                    loss={'angle_out': 'categorical_crossentropy'})
+        
+    def run(self, img_arr):
+        if img_arr is None:
+            print('no image')
+            return 0.0, 0.0
+        if self.dnn:
+            # !!! notice remark on RGB->BGR  !!!
+            # scale=1/255.0 # already done @ img_arr-load_scaled_image_arr(filename, cfg)
+            blob = cv2.dnn.blobFromImage(img_arr,1,
+                        (160, 120), (0,0,0),swapRB=True)
+            self.net.setInput(blob)
+            # names=['n_outputs0/MatMul','n_outputs1/MatMul']
+            # angle_binned, throttle = self.net.forward(names)
+            angle_binned = self.net.forward()            
+            print(angle_binned)
+        else:
+            img_arr = img_arr.reshape((1,) + img_arr.shape)
+            angle_binned = self.model.predict(img_arr)
+            print('angle:',angle_binned)
+            # print('throttle:',throttle)
+        # N = len(throttle[0])
+        # throttle = dk.utils.linear_unbin(throttle, N=N, offset=0.0, R=self.throttle_range)
+        # angle_unbinned = dk.utils.linear_unbin(angle_binned)
+        # return angle_binned
+    

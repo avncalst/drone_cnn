@@ -21,9 +21,11 @@
 # 
 # #CAMERA
 # CAMERA_TYPE = "MOCK"   # (PICAM|PICAM_1|WEBCAM|CVCAM|CSIC|V4L|MOCK)
-# CAMERA_TYPE = "CVCAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|MOCK)
+CAMERA_TYPE = "CVCAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|MOCK)
 # IMAGE_W = 160
 # IMAGE_H = 120
+IMAGE_W = 64        # copter default_avcnetCV
+IMAGE_H = 64        # copter default_avcnetCV
 # IMAGE_DEPTH = 3         # default RGB=3, make 1 for mono
 # CAMERA_FRAMERATE = DRIVE_LOOP_HZ
 # # For CSIC camera - If the camera is mounted in a rotated position, changing the below parameter will correct the output frame orientation
@@ -46,7 +48,7 @@ DRIVE_TRAIN_TYPE = "ArduPilot" # SERVO_ESC|DC_STEER_THROTTLE|DC_TWO_WHEEL|SERVO_
 # STEERING_LEFT_PWM = 460         #pwm value for full left steering
 # STEERING_RIGHT_PWM = 290        #pwm value for full right steering
 
-ARDUPILOT = True
+ARDUPILOT = False
 # 
 # #THROTTLE
 # THROTTLE_CHANNEL = 0            #channel on the 9685 pwm board 0-15
@@ -73,8 +75,10 @@ ARDUPILOT = True
 # #The DEFAULT_MODEL_TYPE will choose which model will be created at training time. This chooses
 # #between different neural network designs. You can override this setting by passing the command
 # #line parameter --type to the python manage.py train and drive commands.
-# DEFAULT_MODEL_TYPE = 'linear'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent)
+DEFAULT_MODEL_TYPE = 'copter'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent|copter)
 # BATCH_SIZE = 128                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
+BATCH_SIZE = 64                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
+# TRAIN_TEST_SPLIT = 0.75          #what percent of records to use for training. the remaining used for validation.
 # TRAIN_TEST_SPLIT = 0.8          #what percent of records to use for training. the remaining used for validation.
 # MAX_EPOCHS = 100                #how many times to visit all records of your data
 # SHOW_PLOT = True                #would you like to see a pop up display of final loss?
@@ -201,9 +205,9 @@ ARDUPILOT = True
 # #This enables that, and sets the path to the simualator and the environment.
 # #You will want to download the simulator binary from: https://github.com/tawnkramer/donkey_gym/releases/download/v18.9/DonkeySimLinux.zip
 # #then extract that and modify DONKEY_SIM_PATH.
-# DONKEY_GYM = False
-# DONKEY_SIM_PATH = "path to sim" #"/home/tkramer/projects/sdsandbox/sdsim/build/DonkeySimLinux/donkey_sim.x86_64"
-# DONKEY_GYM_ENV_NAME = "donkey-generated-track-v0" # ("donkey-generated-track-v0"|"donkey-generated-roads-v0"|"donkey-warehouse-v0"|"donkey-avc-sparkfun-v0")
+DONKEY_GYM = False
+DONKEY_SIM_PATH = "/Users/UGent/Dropbox/donkeycar/DonkeySimWindows/DonkeySim.exe" 
+DONKEY_GYM_ENV_NAME = "donkey-avc-sparkfun-v0" # ("donkey-generated-track-v0"|"donkey-generated-roads-v0"|"donkey-warehouse-v0"|"donkey-avc-sparkfun-v0")
 # 
 # #publish camera over network
 # #This is used to create a tcp service to pushlish the camera feed
