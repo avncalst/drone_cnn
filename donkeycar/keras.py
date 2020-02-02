@@ -375,6 +375,7 @@ def default_avcnetCV(input_shape=(120, 160, 3), roi_crop=(0, 0)):
     input_shape = adjust_input_shape(input_shape, roi_crop)
     opt = keras.optimizers.Adam()
     cfg = dk.load_config()
+    drop = 0.2
 
     
     # Input
@@ -385,17 +386,17 @@ def default_avcnetCV(input_shape=(120, 160, 3), roi_crop=(0, 0)):
     x1 = Conv2D(24, (5, 5), padding='same')(x)
     x1 = Activation('relu')(x1)
     x1 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x1)
-    x1 = Dropout(0.2)(x1)
+    x1 = Dropout(drop)(x1)
 
     x2 = Conv2D(48, (5, 5), padding='same')(x1)
     x2 = Activation('relu')(x2)
     x2 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x2)
-    x2 = Dropout(0.2)(x2)
+    x2 = Dropout(drop)(x2)
 
     x3 = Conv2D(96, (5, 5), padding='same')(x2)
     x3 = Activation('relu')(x3)
     x3 = MaxPooling2D(pool_size=(2, 2), strides=[2,2])(x3)
-    x3 = Dropout(0.2)(x3)
+    x3 = Dropout(drop)(x3)
 
 
     # x4 = Flatten()(x3) # OpenCV/dnn does not support flatten
@@ -405,7 +406,7 @@ def default_avcnetCV(input_shape=(120, 160, 3), roi_crop=(0, 0)):
     x4 = Reshape((int(a),))(x4) # convert dim -> int
     x4 = Dense(500)(x4)
     x4 = Activation('relu')(x4)
-    x4 = Dropout(0.2)(x4)
+    x4 = Dropout(drop)(x4)
 
     angle_out = Dense(4, activation='softmax', name='angle_out')(x4)
     model = Model(inputs=[img_in], outputs=[angle_out])
@@ -839,7 +840,7 @@ class KerasCopter(KerasPilot):
 
     def compile(self):
         self.model.compile(optimizer=self.optimizer, metrics=['acc'],
-                    loss={'angle_out': 'categorical_crossentropy'})
+                     loss={'angle_out': 'categorical_crossentropy'})
         
     def run(self, img_arr):
         if img_arr is None:

@@ -89,10 +89,10 @@ def msg_sensor(dist,orient,distmax):
 def ai():
     cap=PiVideoStream(resolution=(208,208),framerate=20)    #rpi camera
     cap.start()
-    cap.camera.iso=100 # 0:auto, 100-200: sunny day
+    cap.camera.iso=0 # 0:auto, 100-200: sunny day
     cap.camera.awb_mode='sunlight' # sunlight,cloudy,auto
     cap.camera.hflip=True
-    cap.camera.vflip=True    
+    cap.camera.vflip=True  
     time.sleep(2.0)
 
     print("analog_gain: ",float(cap.camera.analog_gain),file=f)
@@ -100,7 +100,7 @@ def ai():
     print("iso: ", cap.camera.iso,file=f)   
 
     print("[INFO] video recording")
-    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 20, (208,208))
+    out = cv2.VideoWriter('avcnet.avi',cv2.VideoWriter_fourcc(*'XVID'), 4, (208,208))
 
 
     # load the trained convolutional neural network
@@ -112,7 +112,7 @@ def ai():
         from keras.models import load_model
         import tensorflow as tf
         from keras.preprocessing.image import img_to_array
-        model = load_model("/home/pi/drone_exe/TF_model/avcnet_best_8.hdf5",
+        model = load_model("/home/pi/drone_exe/TF_model/fly1.h5",
                    custom_objects={"tf": tf} )
     
     if inference == 'tf':
@@ -132,7 +132,7 @@ def ai():
         softmax_tensor = sess.graph.get_tensor_by_name('import/activation_5/Softmax:0')
     
     if inference == 'dnn':
-        net=cv2.dnn.readNetFromTensorflow('/home/pi/drone_exe/TF_model/tf_model_cv.pb')
+        net=cv2.dnn.readNetFromTensorflow('/home/pi/drone_exe/TF_model/fly1.pb')
 ##        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
 ##        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_MYRIAD)
@@ -155,10 +155,7 @@ def ai():
         start = time.time()
         frame = cap.read()
         orig  = frame.copy()
-##        frame = cv2.resize(frame, (64,64))
-##        frame = frame.astype("float")/255.0
-##        frame = img_to_array(frame)
-##        frame = np.expand_dims(frame, axis=0)
+##    
 
 #===========================dnn============================================    
         if inference == 'dnn':
@@ -166,7 +163,7 @@ def ai():
             resized=cv2.resize(frame, (64, 64))
             scale=1/255.0 # AI trained with scaled images image/255
             blob = cv2.dnn.blobFromImage(resized,scale,
-                        (64, 64), (0,0,0),swapRB=False,ddepth = 5)
+                        (64, 64), (0,0,0),swapRB=True,ddepth = 5)
             net.setInput(blob)
             predictions = net.forward()
 
@@ -174,6 +171,7 @@ def ai():
         if inference == 'tf':
             #use tf for inference
             frame = cv2.resize(frame, (64,64))
+            frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR) # @ training images RGB->BGR
             frame = frame.astype("float")/255.0
             frame = img_to_array(frame)
             frame = np.expand_dims(frame, axis=0)    
@@ -183,6 +181,7 @@ def ai():
         if inference == 'k':
             #use k for inference
             frame = cv2.resize(frame, (64,64))
+            frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR) # @ training images RGB->BGR
             frame = frame.astype("float")/255.0
             frame = img_to_array(frame)
             frame = np.expand_dims(frame, axis=0)        
@@ -191,11 +190,10 @@ def ai():
 #===========================================================================
 
         # classify the input image
-        fly = predictions[0][3]
+        fly = predictions[0][0]
         # build the label
-##        my_dict = {'stop':predictions[0][0], 'left':predictions[0][1],
-##            'right':predictions[0][2], 'fly':predictions[0][3]}   
-        my_dict = {'stop':predictions[0][0], 'left':predictions[0][1],
+ 
+        my_dict = {'stop':predictions[0][3], 'left':predictions[0][1],
             'right':predictions[0][2]}        
         maxPair = max(my_dict.items(), key=itemgetter(1))
         fly_f = k*fly_1 + (1-k)*fly
@@ -203,9 +201,8 @@ def ai():
 
 
         if state == 'avoid':
-            label=maxPair[0]
-            proba=maxPair[1]
-##            print(label,file=f)
+##            label=maxPair[0]
+##            proba=maxPair[1]
             if fly_f*100 >= 60:
                 dist=510
                 state='fly'
@@ -214,13 +211,12 @@ def ai():
                 
         else:
             label='forward'
-            proba=fly_f
-##            print(label,proba,file=f)
+            proba=fly
             if fly_f*100 <= 50:
                 dist=180
                 label=maxPair[0]
                 proba=maxPair[1]
-                print(label,file=f)
+                print(my_dict,file=f)
                 state='avoid'
         
 
@@ -402,6 +398,9 @@ def range_dist():
 vehicle = connect('udpin:127.0.0.1:15550', wait_ready=False)
 vehicle.initialize(8,30)
 vehicle.wait_ready('autopilot_version')
+# Set avoidance enable, proximity type mavlink
+vehicle.parameters['avoid_enable']=2
+vehicle.parameters['PRX_TYPE']=2
 # Get all vehicle attributes (state)
 print("\nGet all vehicle attribute values:")
 print(" Autopilot Firmware version: %s" % vehicle.version)
@@ -415,6 +414,12 @@ print(" Attitude: %s" % vehicle.attitude)
 print(" Velocity: %s" % vehicle.velocity)
 print(" GPS: %s" % vehicle.gps_0)
 print(" Flight mode currently: %s" % vehicle.mode.name)
+# parameter 0: not used
+print('avoid_enable: %s' % vehicle.parameters['avoid_enable'])
+print('proximity_type: %s' % vehicle.parameters['PRX_TYPE'])
+
+
+
 # start threads
 f=open('/home/pi/drone_exe/drone/log.txt','w')
 event = threading.Event()

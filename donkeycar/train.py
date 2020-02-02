@@ -108,16 +108,13 @@ def collate_records(records, gen_records, opts):
         throttle = float(json_data["user/throttle"])
 
         if opts['copter']:
-            angle = dk.utils.linear_bin(angle, N=4, offset=1, R=2)
-            throttle = dk.utils.linear_bin(throttle, N=4, offset=1, R=2)
-            sample['angle'] = angle
-            sample['throttle'] = throttle
-        else:
-            if opts['categorical']:
-                angle = dk.utils.linear_bin(angle)
-                throttle = dk.utils.linear_bin(throttle, N=20, offset=0, R=opts['cfg'].MODEL_CATEGORICAL_MAX_THROTTLE_RANGE)
-            sample['angle'] = angle
-            sample['throttle'] = throttle
+            sample['angle'] = dk.utils.linear_bin(angle, N=4, offset=1, R=2)
+            sample['throttle'] = dk.utils.linear_bin(throttle, N=4, offset=1, R=2)
+
+        elif opts['categorical'] :
+            sample['angle'] = dk.utils.linear_bin(angle)
+            sample['throttle'] = dk.utils.linear_bin(throttle, N=20, offset=0, R=opts['cfg'].MODEL_CATEGORICAL_MAX_THROTTLE_RANGE)
+
 
         try:
             accl_x = float(json_data['imu/acl_x'])
