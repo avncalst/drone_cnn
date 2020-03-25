@@ -1,0 +1,253 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <gui>
+      <camera name="user_camera">
+        <pose>-5 0 1 0 0.2 0</pose>
+      </camera>
+    </gui>
+    <physics type="ode">
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>100</iters>
+          <sor>1.0</sor>
+        </solver>
+        <constraints>
+          <cfm>0.0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>0.1</contact_max_correcting_vel>
+          <contact_surface_layer>0.0</contact_surface_layer>
+        </constraints>
+      </ode>
+      <real_time_update_rate>-1</real_time_update_rate>
+      <!--<max_step_size>0.0020</max_step_size>-->
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <scene>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+    </scene>    
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    
+    <actor name="actor">
+        <skin>
+          <filename>walk.dae</filename>
+          <scale>1.0</scale>
+        </skin>
+        <pose>0 0 0 0 0 0</pose>
+        <animation name="walking">
+          <filename>walk.dae</filename>
+          <scale>1.000000</scale>
+          <interpolate_x>true</interpolate_x>
+        </animation>
+        <script>
+          <loop>true</loop>
+          <delay_start>0.000000</delay_start>
+          <auto_start>true</auto_start>
+          <trajectory id="0" type="walking">
+              <waypoint>
+                <time>0.000000</time>
+                <pose>0.000000 1.000000 0.000000 0.000000 0.000000 0.000000</pose>
+              </waypoint>
+              <waypoint>
+                <time>0.500000</time>
+                <pose>0.195090 0.980785 0.000000 0.000000 0.000000 -0.196350</pose>
+              </waypoint>
+              <waypoint>
+                <time>1.000000</time>
+                <pose>0.382683 0.923880 0.000000 0.000000 0.000000 -0.392699</pose>
+              </waypoint>
+              <waypoint>
+                <time>1.500000</time>
+                <pose>0.555570 0.831470 0.000000 0.000000 0.000000 -0.589049</pose>
+              </waypoint>
+              <waypoint>
+                <time>2.000000</time>
+                <pose>0.707107 0.707107 0.000000 0.000000 0.000000 -0.785398</pose>
+              </waypoint>
+              <waypoint>
+                <time>2.500000</time>
+                <pose>0.831470 0.555570 0.000000 0.000000 0.000000 -0.981748</pose>
+              </waypoint>
+              <waypoint>
+                <time>3.000000</time>
+                <pose>0.923880 0.382683 0.000000 0.000000 0.000000 -1.178100</pose>
+              </waypoint>
+              <waypoint>
+                <time>3.500000</time>
+                <pose>0.980785 0.195090 0.000000 0.000000 0.000000 -1.374450</pose>
+              </waypoint>
+              <waypoint>
+                <time>4.000000</time>
+                <pose>1.000000 0.000000 0.000000 0.000000 0.000000 -1.570800</pose>
+              </waypoint>
+              <waypoint>
+                <time>4.500000</time>
+                <pose>0.980785 -0.195090 0.000000 0.000000 0.000000 -1.767150</pose>
+              </waypoint>
+              <waypoint>
+                <time>5.000000</time>
+                <pose>0.923880 -0.382683 0.000000 0.000000 0.000000 -1.963500</pose>
+              </waypoint>
+              <waypoint>
+                <time>5.500000</time>
+                <pose>0.831470 -0.555570 0.000000 0.000000 0.000000 -2.159840</pose>
+              </waypoint>
+              <waypoint>
+                <time>6.000000</time>
+                <pose>0.707107 -0.707107 0.000000 0.000000 0.000000 -2.356190</pose>
+              </waypoint>
+              <waypoint>
+                <time>6.500000</time>
+                <pose>0.555570 -0.831470 0.000000 0.000000 0.000000 -2.552540</pose>
+              </waypoint>
+              <waypoint>
+                <time>7.500000</time>
+                <pose>0.382683 -0.923880 0.000000 0.000000 0.000000 -2.748890</pose>
+              </waypoint>
+              <waypoint>
+                <time>8.500000</time>
+                <pose>0.195090 -0.980785 0.000000 0.000000 0.000000 -2.945240</pose>
+              </waypoint>
+              <waypoint>
+                <time>9.500000</time>
+                <pose>0.000000 -1.000000 0.000000 0.000000 0.000000 -3.141590</pose>
+              </waypoint>
+              <waypoint>
+                <time>10.500000</time>
+                <pose>-0.195090 -0.980785 0.000000 0.000000 0.000000 2.945245</pose>
+              </waypoint>
+              <waypoint>
+                <time>11.500000</time>
+                <pose>-0.382683 -0.923880 0.000000 0.000000 0.000000 2.748895</pose>
+              </waypoint>
+              <waypoint>
+                <time>12.000000</time>
+                <pose>-0.555570 -0.831470 0.000000 0.000000 0.000000 2.552545</pose>
+              </waypoint>
+              <waypoint>
+                <time>12.500000</time>
+                <pose>-0.707107 -0.707107 0.000000 0.000000 0.000000 2.356195</pose>
+              </waypoint>
+              <waypoint>
+                <time>13.000000</time>
+                <pose>-0.831470 -0.555570 0.000000 0.000000 0.000000 2.159845</pose>
+              </waypoint>
+              <waypoint>
+                <time>13.500000</time>
+                <pose>-0.923880 -0.382683 0.000000 0.000000 0.000000 1.963495</pose>
+              </waypoint>
+              <waypoint>
+                <time>14.000000</time>
+                <pose>-0.980785 -0.195090 0.000000 0.000000 0.000000 1.767145</pose>
+              </waypoint>
+              <waypoint>
+                <time>14.500000</time>
+                <pose>-1.000000 0.000000 0.000000 0.000000 0.000000 1.570795</pose>
+              </waypoint>
+              <waypoint>
+                <time>15.000000</time>
+                <pose>-0.980785 0.195090 0.000000 0.000000 0.000000 1.374445</pose>
+              </waypoint>
+              <waypoint>
+                <time>15.500000</time>
+                <pose>-0.923880 0.382683 0.000000 0.000000 0.000000 1.178095</pose>
+              </waypoint>
+              <waypoint>
+                <time>16.000000</time>
+                <pose>-0.831470 0.555570 0.000000 0.000000 0.000000 0.981745</pose>
+              </waypoint>
+              <waypoint>
+                <time>16.500000</time>
+                <pose>-0.707107 0.707107 0.000000 0.000000 0.000000 0.785395</pose>
+              </waypoint>
+              <waypoint>
+                <time>17.000000</time>
+                <pose>-0.555570 0.831470 0.000000 0.000000 0.000000 0.589045</pose>
+              </waypoint>
+              <waypoint>
+                <time>17.500000</time>
+                <pose>-0.382683 0.923880 0.000000 0.000000 0.000000 0.392695</pose>
+              </waypoint>
+              <waypoint>
+                <time>18.000000</time>
+                <pose>-0.195090 0.980785 0.000000 0.000000 0.000000 0.196345</pose>
+              </waypoint>
+          </trajectory>
+        </script>
+    </actor>
+
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>5000 5000</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <!--
+        <visual name="runway">
+          <pose>000 0 0.005 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1829 45</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Runway</name>
+            </script>
+          </material>
+        </visual>
+        -->
+        <visual name="grass">
+          <pose>0 0 -0.1 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>5000 5000</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grass</name>
+            </script>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+
+
+
+    <model name="iris_demo">
+      <include>
+        <uri>model://iris_with_ardupilot</uri>
+      </include>
+    </model>
+  </world>
+</sdf>
