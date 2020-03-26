@@ -7,4 +7,4 @@
 * a simple python obstacle avoidance script is included
 * Wiki: [brief project description](https://github.com/avncalst/drone_cnn/wiki) describing 2 approaches for cnn development
 * donkeycar folder added containing the modified/added files making ArduPilot Rover-copter compatible with donkeycar
-* ros folder added for ArduCopter sitl simulations
+* WiKi ros paragraph added for ArduCopter sitl simulations
