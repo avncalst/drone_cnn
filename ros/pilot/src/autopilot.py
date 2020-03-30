@@ -37,6 +37,11 @@ label='forward'
 proba=1
 dist=510
 
+# use cv2.dnn module for inference
+net=cv2.dnn.readNetFromTensorflow('/home/avncalst/Dropbox/donkeycar/mycar/models/sitl.pb')
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
+
 #=========================================================================
 def slide_velocity(velocity_x, velocity_y, velocity_z):
     msg = vehicle.message_factory.set_position_target_local_ned_encode(
@@ -123,16 +128,17 @@ def callback(data):
     global proba
     global velocity_y
     global dist
+    global net
 
    
     try:
         cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
         print(e)
-    # use cv2.dnn module for inference
-    net=cv2.dnn.readNetFromTensorflow('/home/avncalst/Dropbox/donkeycar/mycar/models/sitl.pb')
-    net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
-    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
+    # # use cv2.dnn module for inference
+    # net=cv2.dnn.readNetFromTensorflow('/home/avncalst/Dropbox/donkeycar/mycar/models/sitl.pb')
+    # net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU) # if no NCS stick
+    # net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) # if no NCS stick
     
     resized=cv2.resize(cv_image, (64, 64))
     scale=1/255.0 # AI trained with scaled images image/255
@@ -255,7 +261,7 @@ def slide():
                 
 
 
-                print'velocity_y:', count, velocity_y
+                print('velocity_y:', count, velocity_y)
                 msg=slide_velocity(velocity_x,velocity_y,velocity_z)
                 vehicle.send_mavlink(msg)
                 time.sleep(1)
