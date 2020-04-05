@@ -49,7 +49,16 @@
     <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="$(arg output)" args="$(arg command_arg3)"/>
   </group>
 
-  <!-- start pilot package -->
-    <node name="avctech" pkg="pilot" type="autopilot.py" output="screen">
-    </node>
+  <!-- uncomment pilot package -->
+  <!--   
+  <node name="avctech" pkg="pilot" type="autopilot.py" output="screen">
+  </node>
+  -->
+   
+  <!-- uncomment web_video_server-->  
+  
+  <node name="webserver" pkg="web_video_server" type="web_video_server" >
+  </node>
+    
+    
 </launch>

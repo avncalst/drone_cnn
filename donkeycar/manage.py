@@ -32,6 +32,7 @@ from donkeycar.parts.file_watcher import FileWatcher
 from donkeycar.parts.launch import AiLaunch
 from donkeycar.utils import *
 from donkeycar.parts.ardupilot import car,MonitorArdupilot, DriveArdupilot
+from donkeycar.parts.copter_ros import copter,MonitorArdupilot
 
 def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type='single', meta=[] ):
     '''
@@ -98,18 +99,21 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
             threaded = True
             inputs = ['angle', 'throttle']
         elif cfg.CAMERA_TYPE == "PICAM":
-            from donkeycar.parts.camera import PiCamera,CvImageView
+            from donkeycar.parts.camera import PiCamera, CvImageView
             cam = PiCamera(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
         elif cfg.CAMERA_TYPE == "PICAM_1":
             from donkeycar.parts.camera import PiCam, CvImageView
             cam = PiCam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
-##            disp = CvImageView()           
+            # disp = CvImageView()           
         elif cfg.CAMERA_TYPE == "WEBCAM":
             from donkeycar.parts.camera import Webcam
             cam = Webcam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
         elif cfg.CAMERA_TYPE == "CVCAM":
             from donkeycar.parts.cv import CvCam, CvImageView
             cam = CvCam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)
+        elif cfg.CAMERA_TYPE == "ROSCAM":
+            from donkeycar.parts.cv import RosCam, CvImageView
+            cam = RosCam(image_w=cfg.IMAGE_W, image_h=cfg.IMAGE_H, image_d=cfg.IMAGE_DEPTH)        
             # disp = CvImageView()
         elif cfg.CAMERA_TYPE == "CSIC":
             from donkeycar.parts.camera import CSICamera
@@ -143,7 +147,12 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
 
     elif cfg.ARDUPILOT:
         # use ardopilot to steer the vehicle
-        obj = car()
+        # obj = car()
+        if cfg.CAMERA_TYPE == "ROSCAM":
+            obj = copter()
+        else:
+            obj = car()
+            
         ctr = MonitorArdupilot(obj)
         print('ctr: ardupilot')
 
@@ -491,8 +500,11 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
         V.add(throttle, inputs=['throttle'])
 
     elif cfg.DRIVE_TRAIN_TYPE == "ArduPilot":
+        if cfg.ARDUPILOT:
             driving = DriveArdupilot(obj)
-            V.add(driving, inputs=['angle','throttle'], run_condition='run_pilot')             
+            V.add(driving, inputs=['angle','throttle'], run_condition='run_pilot') 
+        else:
+            pass            
             
     
 

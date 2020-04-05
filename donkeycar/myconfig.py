@@ -21,12 +21,12 @@
 # 
 # #CAMERA
 # CAMERA_TYPE = "MOCK"   # (PICAM|PICAM_1|WEBCAM|CVCAM|CSIC|V4L|MOCK)
-CAMERA_TYPE = "CVCAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|MOCK)
+CAMERA_TYPE = "ROSCAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|MOCK|ROSCAM)
 # IMAGE_W = 160
 # IMAGE_H = 120
 IMAGE_W = 64        # copter default_avcnetCV
 IMAGE_H = 64        # copter default_avcnetCV
-# IMAGE_DEPTH = 3         # default RGB=3, make 1 for mono
+IMAGE_DEPTH = 3         # default RGB=3, make 1 for mono
 # CAMERA_FRAMERATE = DRIVE_LOOP_HZ
 # # For CSIC camera - If the camera is mounted in a rotated position, changing the below parameter will correct the output frame orientation
 # CSIC_CAM_GSTREAMER_FLIP_PARM = 0 # (0 => none , 4 => Flip horizontally, 6 => Flip vertically)
@@ -48,7 +48,7 @@ DRIVE_TRAIN_TYPE = "ArduPilot" # SERVO_ESC|DC_STEER_THROTTLE|DC_TWO_WHEEL|SERVO_
 # STEERING_LEFT_PWM = 460         #pwm value for full left steering
 # STEERING_RIGHT_PWM = 290        #pwm value for full right steering
 
-ARDUPILOT = False
+ARDUPILOT = True
 # 
 # #THROTTLE
 # THROTTLE_CHANNEL = 0            #channel on the 9685 pwm board 0-15
@@ -77,7 +77,7 @@ ARDUPILOT = False
 # #line parameter --type to the python manage.py train and drive commands.
 DEFAULT_MODEL_TYPE = 'copter'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent|copter)
 # BATCH_SIZE = 128                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
-BATCH_SIZE = 64                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
+BATCH_SIZE = 64               #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
 # TRAIN_TEST_SPLIT = 0.75          #what percent of records to use for training. the remaining used for validation.
 # TRAIN_TEST_SPLIT = 0.8          #what percent of records to use for training. the remaining used for validation.
 # MAX_EPOCHS = 100                #how many times to visit all records of your data
