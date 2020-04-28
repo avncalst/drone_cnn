@@ -8,3 +8,5 @@
 * Wiki: [brief project description](https://github.com/avncalst/drone_cnn/wiki) describing 2 approaches for cnn development
 * donkeycar folder added containing the modified/added files making ArduPilot Rover-copter compatible with donkeycar
 * Wiki ros paragraph added for ArduCopter sitl simulations
+
+![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
