@@ -11,4 +11,4 @@
 * autoencoder folder added
 
 ![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
-*variational autoencoder*
+
