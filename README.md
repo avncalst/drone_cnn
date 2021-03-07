@@ -9,6 +9,7 @@
 * donkeycar folder added containing the modified/added files making ArduPilot Rover-copter compatible with donkeycar
 * Wiki ros paragraph added for ArduCopter sitl simulations
 * autoencoder folder added
+* folder transfer learning jupyter notebooks added: custom object detection and custom classification
 
 ![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
 
