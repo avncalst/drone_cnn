@@ -9,7 +9,7 @@
 * donkeycar folder added containing the modified/added files making ArduPilot Rover-copter compatible with donkeycar
 * Wiki ros paragraph added for ArduCopter sitl simulations
 * autoencoder folder added
-* folder transfer learning jupyter notebooks added: custom object detection and custom classification
+* folder transfer learning jupyter notebooks added: custom object detection and custom classification; this folder also includes an application using mobilenet ssd face tracking to control a DJI TELLO drone. 
 * revisions: an ai_avoid_rev.py is added in rpi3 folder using tflite inference with coral usb accelerator; the training is done by transfer learning using a jupyter notebook on Google's Colab (see folder transfer_learning).
 * a real_avoid.py file is added in rpi3 using the Intel RealSense camera for obstacle avoidance
 
