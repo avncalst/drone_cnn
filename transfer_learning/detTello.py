@@ -22,7 +22,7 @@ tello_drone = True
 cust = False
 
 tpu = True
-counter = 1 # 1: no flight; 0: flight Tello
+counter = 0 # 1: no flight; 0: flight Tello
 confThreshold = 0.25
 test = False
 
@@ -175,9 +175,9 @@ def draw_rect(image, box,score,class_name,use_normalized_coordinates):
 def traceDrone(cx,cy,area):
 	width = 320 # image size used @ inference
 	height = 320
-	error = width//2 - cx
-	errora = (7000-area)//100 # scale error
-	errorb = height//2 - cy 
+	error_0 = width//2 - cx
+	error_1 = (7000-area)//100 # scale error
+	error_2 = height//2 - cy 
 	 
 	pid_0 = PID(Kp=0.5,Kd=0.5,setpoint=width//2,output_limits=(-50,50))			# yaw
 	pid_1 = PID(Kp=0.5,Kd=0.5,setpoint=7000//100,output_limits=(-30,30))		# pitch
@@ -186,13 +186,13 @@ def traceDrone(cx,cy,area):
 	speed_1 = int(pid_1(area//100))
 	speed_2 = int(pid_2(cy))
 
-	print('speed:',speed_0)
-	print('speeda:',speed_1)
-	print('speedb:',speed_2)
+	print('speed_0:',speed_0)
+	print('speed_1:',speed_1)
+	print('speed_2:',speed_2)
 	
-	print('error:',error)
-	print('errora:',errora)
-	print('errorb:',errorb)
+	print('error_0:',error_0)
+	print('error_1:',error_1)
+	print('error_2:',error_2)
 	
 	if cx:
 		drone.yaw_velocity = speed_0
