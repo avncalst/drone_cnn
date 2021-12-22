@@ -18,11 +18,11 @@ def slide_velocity(velocity_x, velocity_y, velocity_z):
     0,       # time_boot_ms (not used)
     0, 0,    # target system, target component
     mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED, # frame
-    0b111111000111, # type_mask (only speeds enabled), x:LSB & yaw_rate: MSB
-    0, 0, 0, # x, y, z positions (not used)
-    velocity_x, velocity_y, velocity_z, # x, y, z velocity in m/s
-    0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
-    0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink)
+    type_mask=mask,
+    x=0, y=0, z=0, # x, y, z positions in m (not used)
+    vx=velocity_x, vy=velocity_y, vz=velocity_z, # x, y, z velocity in m/s
+    afx=0, afy=0, afz=0, # x, y, z acceleration in m/s^2
+    yaw=0, yaw_rate=0)   # yaw, yaw_rate in rad, rad/s
 
     return msg
 
@@ -312,6 +312,27 @@ def slide():
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # --------------------------main------------------------------------
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# As of  ardupilot version 4.1 guided commands have changed. In SET_POSITION_TARGET_LOCAL_NED
+# one can control position, velocity, acceleration and yaw requiring an appropriate type_mask.
+# bit0:PosX, bit1:PosY, bit2:PosZ, bit3:VelX, bit4:VelY, bit5:VelZ, bit6:AccX, bit7:AccY,
+# bit8:AccZ, bit10:yaw, bit11:yaw rate. bit9 not used.
+# Mavlink Position_Target_TypeMask
+
+X_IGNORE = 1
+Y_IGNORE = 2
+Z_IGNORE = 4
+VX_IGNORE = 8
+VY_IGNORE = 16
+VZ_IGNORE = 32
+AX_IGNORE = 64
+AY_IGNORE = 128
+AZ_IGNORE = 256
+FORCE_SET = 512
+YAW_IGNORE = 1024 
+YAW_RATE_IGNORE =2048
+
+mask = X_IGNORE | Y_IGNORE | Z_IGNORE | AX_IGNORE | AY_IGNORE | AZ_IGNORE | YAW_RATE_IGNORE # use velocity and Yaw
+print('type_mask=',mask)
 
 progress("INFO: Starting Vehicle communications")
 # connect vehicle to access point
