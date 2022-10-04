@@ -13,7 +13,8 @@
 * revisions: an ai_avoid_rev.py is added in rpi3 folder using tflite inference with coral usb accelerator; the training is done by transfer learning using a jupyter notebook on Google's Colab (see folder transfer_learning).
 * a real_avoid.py file is added in rpi3 using the Intel RealSense camera for obstacle avoidance
 * rosetta folder added containing python scripts using the rosetta app to control DJI drones
-* oak_avoid.py file added in rpi3 using OAK-D depthAI
+* oak_avoid.py file added in rpi3-rpi4 using OAK-D depthAI
+* oak_avoid_rev3.py file added in rpi3-rpi4 containing a new avoidance algorithme and person tracking
 
 ![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
 
