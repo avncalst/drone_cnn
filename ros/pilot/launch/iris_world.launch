@@ -15,7 +15,13 @@
   <arg name="physics" default="ode"/>
   <arg name="verbose" default="false"/>
   <arg name="output" default="screen"/>
-  <arg name="world_name" default="worlds/iris_arducopter_runway.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+
+  <arg name="world_name" value="$(find pilot)/worlds/iris_arducopter_runway.world"/> <!-- world localized @ pilot -->
+  <!--
+  <arg name="world_name" default="worlds/iris_arducopter_runway.world"/> --> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+  <!--
+  <arg name="world_name" default="worlds/test.world"/>-->
+  
   <arg name="respawn_gazebo" default="false"/>
   <arg name="use_clock_frequency" default="false"/>
   <arg name="pub_clock_frequency" default="100"/>
@@ -50,15 +56,20 @@
   </group>
 
   <!-- uncomment pilot package -->
-  <!--   
+    
   <node name="avctech" pkg="pilot" type="autopilot.py" output="screen">
-  </node>
+  <!--
+  <node name="avctech" pkg="pilot" type="test.py" output="screen">
   -->
+  </node>
+  
    
   <!-- uncomment web_video_server-->  
+  <!--enables to view video by means of a webbrowser address 127.0.0.1:8080-->
   
+  <!--
   <node name="webserver" pkg="web_video_server" type="web_video_server" >
   </node>
-    
+  -->  
     
 </launch>
