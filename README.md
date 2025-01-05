@@ -10,8 +10,8 @@
 * Wiki ros paragraph added for ArduCopter sitl simulations
 * autoencoder folder added
 * folder transfer learning jupyter notebooks added: custom object detection and custom classification; this folder also includes an application using mobilenet ssd face tracking to control a DJI TELLO drone. 
-* revisions: an ai_avoid_rev.py is added in rpi3 folder using tflite inference with coral usb accelerator; the training is done by transfer learning using a jupyter notebook on Google's Colab (see folder transfer_learning).
-* a real_avoid.py file is added in rpi3 using the Intel RealSense camera for obstacle avoidance
+* revisions: an ai_avoid_rev.py is added in rpi3-rpi4 folder using tflite inference with coral usb accelerator; the training is done by transfer learning using a jupyter notebook on Google's Colab (see folder transfer_learning).
+* a real_avoid.py file is added in rpi3-rpi4 using the Intel RealSense camera for obstacle avoidance
 * rosetta folder added containing python scripts using the rosetta app to control DJI drones
 * oak_avoid.py file added in rpi3-rpi4 using OAK-D depthAI
 * oak_avoid_rev3.py file added in rpi3-rpi4 containing a new avoidance algorithme and person tracking
