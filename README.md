@@ -18,3 +18,5 @@
 
 ![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
 
+This repo will deal with drone related problems only, while the new AI repo will focuss on general AI jupyter notebooks
+
