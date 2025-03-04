@@ -64,17 +64,7 @@ def traceDrone(cx,hgn):
 def ai(queue):
 
     nnBlobPath = '/home/pi/drone_exe/drone/models//yolov8n_voc_openvino_2022.1_4shave.blob'
-    # nnBlobPath = '/home/pi/drone_exe/drone/models/yolov8n_coco_416x416_4shave.blob'
-    
-    # labelMap = ["person","bicycle","car","motorbike","aeroplane","bus","train","truck","boat","traffic light","fire hydrant","stop sign",
-    #         "parking meter","bench","bird","cat","dog","horse","sheep","cow","elephant","bear","zebra","giraffe","backpack","umbrella",
-    #         "handbag","tie","suitcase","frisbee","skis","snowboard","sports ball","kite","baseball bat","baseball glove","skateboard",
-    #         "surfboard","tennis racket","bottle","wine glass","cup","fork","knife","spoon","bowl","banana","apple","sandwich","orange",
-    #         "broccoli","carrot","hot dog","pizza","donut","cake","chair","sofa","pottedplant","bed","diningtable","toilet","tvmonitor",
-    #         "laptop","mouse","remote","keyboard","cell phone","microwave","oven","toaster","sink","refrigerator","book","clock","vase",
-    #         "scissors","teddy bear","hair drier","toothbrush"]
-
-
+ 
     labelMap = ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow",
                     "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
     pipeline = dai.Pipeline()
@@ -105,7 +95,7 @@ def ai(queue):
     camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
     camRgb.setInterleaved(False)
     camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.BGR)
-    camRgb.setFps(20)
+    camRgb.setFps(30)
 
     monoLeft.setResolution(dai.MonoCameraProperties.SensorResolution.THE_400_P)
     monoLeft.setBoardSocket(dai.CameraBoardSocket.CAM_B)
@@ -168,7 +158,6 @@ def ai(queue):
         #+++++++++++++++++++++++++++
         # init variables
         startTime = time.monotonic()
-        # out = cv2.VideoWriter('oak-d.avi',cv2.VideoWriter_fourcc(*'XVID'), 20, (640,400))
         counter = 0
         fps = 0
         color = (0,0,0)
@@ -192,8 +181,6 @@ def ai(queue):
         dist_safe = 200 # mm
         #+++++++++++++++++++++++++++
         flag = False
-        # flagLeft = False
-        # flagRight = False
         flagCent = False
         crit = 10 # threshold number of pixels detected
  
@@ -218,10 +205,10 @@ def ai(queue):
             # rectangle window (center_win) defined at 3m from drone: width 2m height 1m
             # 2 rectangles (left_win & right_win) 0.66m*1m left and right form center_win
             # center of center_win rectangle (307,235) determined by homography from center of inPreview (320,200)
-            left_win = dist[151:319,56:156]
-            right_win = dist[151:319,458:558]
-            center_win =dist[151:319,156:458]
-            center_win_fl = dist_fl[151:319,156:458]
+            left_win = dist[49:365,68:163] # slice: rows,columns
+            right_win = dist[49:365,479:580]
+            center_win =dist[49:365,163:479]
+            center_win_fl = dist_fl[49:365,163:479]
 
             # check whether objects are closer than dist_thres(+200 mm)
             count_left = cv2.countNonZero(left_win)
@@ -265,11 +252,7 @@ def ai(queue):
                 except:
                     label = t.label
  
-                # coordinates transformation: map 300x300 NN image -> preview image 400x400 + 120 (x_offset)
-                # x1 = int(x1+120)
-                # x2 = int(x2+120)
-                # y1 = int(y1)
-                # y2 = int(y2)
+                # coordinates transformation: map 416x416 NN image -> preview image 400x400 + 120 (x_offset)
                 x1 = int(x1*0.96+120)
                 x2 = int(x2*0.96+120)
                 y1 = int(y1*0.96)

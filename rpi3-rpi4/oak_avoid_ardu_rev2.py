@@ -164,7 +164,7 @@ def ai(queue):
 
     global depth_range, chan_8
     flag_depth = False
-    dist_saf = 1 # colorText turns red if distance obstacle < dist_saf
+    dist_saf = 3 # colorText turns red if distance obstacle < dist_saf
   
 
     pipeline = dai.Pipeline()
@@ -252,10 +252,9 @@ def ai(queue):
             The depth frame coincides with the monoLeft cam with optical center pixel coordinates cx,cy. 
             The global X,Y,Z coordinates of the obstacle corresponds to the image u,v coordinates using u = fx.X/Z
             and v = fy.Y/Z. fx anf fy are the focal length along the u anf v axis in pixels. fx and fy depend on the
-            image resolution of the monoLeft cam. fx=454 and fy=504 pixels in case of a 640x400 image. Given w and H the monoLeft
-            cam has a viewing angle of +/- 19 degrees horizontal and a +/- 17 degrees vertical. With a minimun avoid detecting
-            distance dmin, the drone will not detect the obstacle provided it is d = dmin.tan(viewing angle) away from the optical
-            axis of the monoLeft cam. In case of dmin = 2m, d = 0.68m; dmin = 3m, dmin = 1.0m
+            image resolution of the monoLeft cam. fx=454 and fy=504 pixels in case of a 640x400 image. Given W 
+            of the raster on the monoLeft image the drone will not detect the obstacle provided it is d = W.Z/(2fx)
+            away from the optical axis of the monoLeft cam. In case of Z = 2m, d = 0.7m; Z = 3m, d = 1.0m
             The drone uses a FRD local frame attached to the vehicle with
             x: forward, y: right and z: down. This means that the coordinates of the closest obstacle in the 9 parts are 
             converted to the x,y,z of FRD using x: distance d of obstacle, x: (u-cx).d/fx and y: (v-cy).d/fy.
@@ -379,7 +378,7 @@ os.environ["MAVLINK20"] = "1"
 last_obstacle_distance_sent_ms = 0
 # global chan_8
 
-flag_drone = False
+flag_drone = True
 
 if flag_drone:
     IP = 'udpin:127.0.0.1:15550'
