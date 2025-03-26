@@ -164,7 +164,7 @@ def ai(queue):
 
     global depth_range, chan_8
     flag_depth = False
-    dist_saf = 3 # colorText turns red if distance obstacle < dist_saf
+    dist_saf = 1 # colorText turns red if distance obstacle < dist_saf
   
 
     pipeline = dai.Pipeline()
@@ -247,8 +247,8 @@ def ai(queue):
             #-----------------detect the closest obstacle in screen divisions----------------------
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             """
-            The bgr screen has a resolution of 640x400 and is divided into 9 parts. These parts are mapped to
-            the depth frame using the homograph.py + perspectiveTransform program with topLeft corner offx,offy. 
+            The bgr screen has a resolution of 640x400 and is divided into 9 parts. These parts are mapped to 
+            the depth frame using homograph.py + perspectiveTransform (align_images.py) with topLeft corner offx,offy. 
             The depth frame coincides with the monoLeft cam with optical center pixel coordinates cx,cy. 
             The global X,Y,Z coordinates of the obstacle corresponds to the image u,v coordinates using u = fx.X/Z
             and v = fy.Y/Z. fx anf fy are the focal length along the u anf v axis in pixels. fx and fy depend on the
@@ -378,7 +378,7 @@ os.environ["MAVLINK20"] = "1"
 last_obstacle_distance_sent_ms = 0
 # global chan_8
 
-flag_drone = True
+flag_drone = False
 
 if flag_drone:
     IP = 'udpin:127.0.0.1:15550'
