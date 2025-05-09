@@ -32,7 +32,7 @@ def progress(string):
     sys.stdout.flush()
 
 
-def traceDrone(cx,hgn):
+def traceDrone(cx,cy,cyt):
     # Kp too large -> oscillations 
     # mes_T = 1 ->  Kp=0.15, Ki=0.5 (-0.15,0.15)
     #           ->  Kp=2, Ki=1 (-0.7,0.7) 
@@ -44,10 +44,11 @@ def traceDrone(cx,hgn):
     # conditions are not met the baro is used for detemining the height.
     
     pid_0 = PID(Kp=0.15,Ki=0.5,setpoint=320/100,output_limits=(-0.15,0.15))    # yaw; limit to 4 degrees
-    pid_1 = PID(Kp=2,Ki=1,setpoint=1,output_limits=(-0.5,0.5))       # pitch; limit 0.5 m/sec
+    pid_1 = PID(Kp=2,Ki=1,setpoint=cyt/100,output_limits=(-0.5,0.5))       # pitch; limit 0.5 m/sec
     
     speed_yaw = -(pid_0(cx/100))
-    speed_pitch = (pid_1(hgn))
+    speed_pitch = (pid_1(cy/100))
+    # speed_yaw = 0
     # speed_pitch = 0
     p, i, d = pid_0.components
     p1, i1, d1 = pid_1.components
@@ -161,11 +162,14 @@ def ai(queue):
         counter = 0
         fps = 0
         color = (0,0,0)
-        global state,flag_track,cx,hgn,hg,hgt,altCur,altTar
+        global state,flag_track,cx,hgn,hg,hgt,altCur,altTar,cy,cyt
         cx = 320 # pixels
-        hgn = 1 # pixels
-        hg = 100
-        hgt = 100
+        cy = 200
+        ID = 0
+        # hgn = 1 # pixels
+        # hg = 100
+        # hgt = 100
+        cyt = 200
         altCur = 3 # m
         altTar = 3
         flag_track = False
@@ -176,8 +180,8 @@ def ai(queue):
         k=0.66  # k=(tau/T)/(1+tau/T) tau time constant LPF, T period; k=0 # no filtering 
         per_center_1 = 10 
         #+++++++++++++++++++++++++++
-        dist_thres_mm = 3000 # mm
-        #dist_thres_mm = 100 # mm
+        # dist_thres_mm = 3000 # mm
+        dist_thres_mm = 100 # mm
         dist_safe = 200 # mm
         #+++++++++++++++++++++++++++
         flag = False
@@ -205,10 +209,10 @@ def ai(queue):
             # rectangle window (center_win) defined at 3m from drone: width 2m height 1m
             # 2 rectangles (left_win & right_win) 0.66m*1m left and right form center_win
             # center of center_win rectangle (307,235) determined by homography from center of inPreview (320,200)
-            left_win = dist[49:365,68:163] # slice: rows,columns
-            right_win = dist[49:365,479:580]
-            center_win =dist[49:365,163:479]
-            center_win_fl = dist_fl[49:365,163:479]
+            left_win = dist[56:370,73:166] # slice: rows,columns
+            right_win = dist[56:370,469:557]
+            center_win =dist[56:370,166:469]
+            center_win_fl = dist_fl[56:370,166:469]
 
             # check whether objects are closer than dist_thres(+200 mm)
             count_left = cv2.countNonZero(left_win)
@@ -267,8 +271,9 @@ def ai(queue):
                 if t.status.name == "TRACKED" and t.id==ID:
                 # if t.status.name == "TRACKED": 
                     cx = (x2-x1)//2+x1
-                    hg = (y2-y1)
-                    hgn = hg/hgt
+                    cy = (y2-y1)//2+y1
+                    # hg = (y2-y1)
+                    # hgn = hg/hgt
                     altCur = vehicle.location.global_relative_frame.alt
                     flag_track = True 
                     lab = "track"
@@ -329,7 +334,7 @@ def ai(queue):
                 colo = (0,0,255)
                 if flagOnce and flag_track:
                     # ctx = cx
-                    hgt = hg
+                    cyt = cy
                     flagOnce = False
                     flag = True
                 # if state == "fly":
@@ -371,6 +376,7 @@ def ai(queue):
             queue.put(Frame)
 
             cv2.imshow('Frame',Frame)
+            # cv2.imshow('center_win',center_win)
             if cv2.waitKey(1) == 27:
                 break # interrupt loop by pressing 'esc' key
         f.close()
@@ -408,8 +414,8 @@ def slide():
 
                 if state == "fly":
                     if flag_track:
-                        print('cx,hgn:',cx,hgn,file=f) # log
-                        speed_yaw,speed_pitch = traceDrone(cx,hgn)
+                        print('cx,cy:',cx,cy,file=f) # log
+                        speed_yaw,speed_pitch = traceDrone(cx,cy,cyt)
                         print('speed_yaw,speed_pitch:',speed_yaw,speed_pitch,file=f)
                         msg=velyaw(speed_pitch,0,0,speed_yaw)
                         vehicle.send_mavlink(msg)
