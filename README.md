@@ -15,6 +15,7 @@
 * rosetta folder added containing python scripts using the rosetta app to control DJI drones
 * oak_avoid.py file added in rpi3-rpi4 using OAK-D depthAI
 * oak_avoid_rev3.py file added in rpi3-rpi4 containing a new avoidance algorithme and person tracking
+* oak_follow_ip_rev1.0.py added in rpi3-rpi4 to make the code compatible to h12pro remote control
 
 ![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
 
