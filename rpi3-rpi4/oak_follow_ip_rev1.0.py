@@ -7,9 +7,13 @@ import depthai as dai
 import numpy as np
 import time
 import sys
+import collections
+collections.MutableMapping = collections.abc.MutableMapping
 from pymavlink import mavutil
 from dronekit import connect, VehicleMode
 import queue
+
+
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ---------------------functions------------------------------------
@@ -571,13 +575,16 @@ YAW_RATE_IGNORE =2048
 mask_velyaw = X_IGNORE | Y_IGNORE | Z_IGNORE | AX_IGNORE | AY_IGNORE | AZ_IGNORE | YAW_RATE_IGNORE # use velocity and Yaw
 print('type_mask_velyaw=',mask_velyaw) # 2503
 
+progress("INFO: VERIFY PRX1_TYPE=0")
+time.sleep(5)
 progress("INFO: Starting Vehicle communications")
 # connect vehicle to access point
-##vehicle = connect('udpin:192.168.1.61:14550', wait_ready=False)
+# vehicle = connect('udpin:192.168.1.32:15550', wait_ready=False)
 vehicle = connect('udpin:127.0.0.1:15550', wait_ready=False,source_system=1,source_component=10) # on rpi
 # vehicle = connect('udpin:127.0.0.1:14550', wait_ready=False)
 vehicle.initialize(10,30)
 vehicle.wait_ready('autopilot_version')
+
 
 # Get all vehicle attributes (state)
 print("\nGet all vehicle attribute values:")
@@ -588,14 +595,25 @@ print("   Patch version number: %s" % vehicle.version.patch)
 print("   Release type: %s" % vehicle.version.release_type())
 print("   Release version: %s" % vehicle.version.release_version())
 print("   Stable release?: %s" % vehicle.version.is_stable())
-print(" Attitude: %s" % vehicle.attitude)
+attitude = vehicle.attitude
+print(" %s" % attitude)
+print("yaw =",attitude.yaw)
 print(" Altitude: %s" % vehicle.location.global_relative_frame.alt)
+print(" %s" % vehicle.location.global_frame)
+location = vehicle.location.local_frame
+print(" %s" % location)    #NED
+print("location north = ",location.north)
 print(" Velocity: %s" % vehicle.velocity)
 print(" GPS: %s" % vehicle.gps_0)
 print(" Flight mode currently: %s" % vehicle.mode.name)
+##prx1_type_value = vehicle.parameters['PRX1_TYPE']
+##print(f"PRX1_TYPE: {prx1_type_value}")
+##vehicle.parameters['PRX1_TYPE'] = 0
+##prx1_type_value = vehicle.parameters['PRX1_TYPE']
+##print(f"PRX1_TYPE is now: {prx1_type_value}")
+
 # Change the parameter value (Copter, Rover)
-# vehicle.parameters['PRX1_TYPE']=0 # no prx sensor
-# print(" PRX1_TYPE: %s" % vehicle.parameters['PRX1_TYPE'])
+
 
 # start threads
 f=open('oak_log.txt','w')
