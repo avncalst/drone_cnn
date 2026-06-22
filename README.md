@@ -1,24 +1,93 @@
 # drone_cnn
-* python cnn files for drone obstacles avoidance.
-* files include training cnn (avcNet folder) and files for running cnn on rpi3 (rpi3 folder)
-* example cnn trained binary files (hdf5 - pb) included in rpi3 folder
-* different interference methods added: OpenVINO (Intel), DNN-OpenCV, tensorflow, keras.
-* on rpi3 DNN-OpenCV: 6 fps, DNN-MYRIAD (NCS1): 20 fps using OpenCV version 4.1.0
-* a simple python obstacle avoidance script is included
-* Wiki: [brief project description](https://github.com/avncalst/drone_cnn/wiki) describing 2 approaches for cnn development
-* donkeycar folder added containing the modified/added files making ArduPilot Rover-copter compatible with donkeycar
-* Wiki ros paragraph added for ArduCopter sitl simulations
-* autoencoder folder added
-* folder transfer learning jupyter notebooks added: custom object detection and custom classification; this folder also includes an application using mobilenet ssd face tracking to control a DJI TELLO drone. 
-* revisions: an ai_avoid_rev.py is added in rpi3-rpi4 folder using tflite inference with coral usb accelerator; the training is done by transfer learning using a jupyter notebook on Google's Colab (see folder transfer_learning).
-* a real_avoid.py file is added in rpi3-rpi4 using the Intel RealSense camera for obstacle avoidance
-* rosetta folder added containing python scripts using the rosetta app to control DJI drones
-* oak_avoid.py file added in rpi3-rpi4 using OAK-D depthAI
-* oak_avoid_rev3.py file added in rpi3-rpi4 containing a new avoidance algorithme and person tracking
-* oak_follow_ip_rev1.0.py, oak_avoid_ip_rev.py added in rpi3-rpi4 to make the code compatible to h12pro remote control
-* 2 avoid algorithmes added: avoid_optoflow_rev1.py and revised oak_avoid_ip_rev3.py
 
-![variational autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
+Python CNN files for drone obstacle avoidance.
 
-This repo will deal with drone related problems only, while the new AI repo will focuss on general AI jupyter notebooks
+## 📖 Wiki
+- [Project description](https://github.com/avncalst/drone_cnn/wiki) - 2 approaches for CNN development
+- ArduCopter SITL simulation instructions
 
+## 📁 Project Structure
+- `avcNet/` - Training CNN models (HDF5/PB binary files included in `rpi3/`)
+- `rpi3/` - Files for running CNN on Raspberry Pi 3 with OpenVINO, DNN-OpenCV, TensorFlow, Keras
+- `rpi3-rpi4/` - Files for running CNN on Raspberry Pi 3/4 and Coral USB accelerator
+- `donkeycar/` - Modified files for ArduPilot Rover-copter compatibility
+- `autoencoder/` - Autoencoder implementations
+- `transfer_learning/` - Jupyter notebooks for custom object detection/classification
+- `jupyter_notebooks/` - Custom classification notebooks
+- `rosetta/` - Scripts using rosetta app for DJI drone control
+
+## 🖥️ rpi3-rpi4 Obstacle Avoidance Scripts
+
+### Performance Comparison
+- **Intel NCS1 (DNN-MYRIAD):** ~20 FPS with OpenCV 4.1.0
+- **DNN-OpenCV:** ~6 FPS on rpi3
+
+---
+
+### DepthAI-based Scripts
+
+| File | Description |
+|------|-------------|
+| `oak_avoid.py` | OAK-D depth camera obstacle avoidance |
+| `oak_avoid_rev3.py` | New avoidance algorithm with person tracking |
+| `oak_follow_ip_rev1.0.py` | Compatible with H12Pro remote control |
+| `oak_avoid_ip_rev.py` | H12Pro remote control compatibility |
+
+---
+
+### Algorithm Variants
+
+| File | Description |
+|------|-------------|
+| `avoid_optoflow_rev1.py` | OFLOW-based avoidance algorithm |
+| `revised_oak_avoid_ip_rev3.py` | Improved avoidance algorithm |
+
+---
+
+### Other Hardware
+
+| File | Description |
+|------|-------------|
+| `avcNet/avcNet.h5` | Trained model for inference |
+| `avcNet_saved/` | Saved trained model |
+| `avcNet_64bit_saved/` | 64-bit model files |
+| `avcNet_tiny_saved/` | Optimized model |
+
+---
+
+### Coral USB Accelerator (TFLite)
+
+- **File:** `ai_avoid_rev.py` - TensorFlow Lite inference with Coral USB accelerator
+- **Training:** Transfer learning via Jupyter notebook in `transfer_learning/` on Google Colab
+
+---
+
+### RealSense Camera
+
+- **File:** `real_avoid.py` - Intel RealSense camera for obstacle avoidance
+
+---
+
+## 🤖 DJI Drone Integration
+
+- **`rosetta/`** - Python scripts for DJI drone control via rosetta app
+- Face tracking app using MobileNet-SSD (see `transfer_learning/`)
+
+---
+
+## 📊 Autoencoder
+
+- Variational autoencoder for obstacle detection (see `autoencoder/`)
+
+---
+
+## 🏗️ Architecture
+
+![Variational Autoencoder](https://github.com/avncalst/drone_cnn/blob/master/images/test29.png)
+
+---
+
+## 📝 Additional Notes
+
+- Simple Python obstacle avoidance script included
+- `donkeycar/` contains ArduPilot Rover-copter integration files
