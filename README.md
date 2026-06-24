@@ -77,7 +77,7 @@ Python CNN files for drone obstacle avoidance.
 
 ## 📊 Autoencoder
 
-- Variational autoencoder for obstacle detection (see `autoencoder/`)
+- test of encoder-decoder structure (see `autoencoder/`)
 
 ---
 
